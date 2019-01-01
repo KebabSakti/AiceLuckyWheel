@@ -1,7 +1,10 @@
 package com.vjtechsolution.aiceluckywheel;
 
 public class UserAuth {
-    private String username, password, api_token;
+
+    private String username, password, message;
+    private Boolean status;
+    private LoginData data;
 
     public UserAuth(String username, String password) {
         this.username = username;
@@ -12,7 +15,15 @@ public class UserAuth {
         return username;
     }
 
-    public String getApi_token() {
-        return api_token;
+    public Boolean getStatus() {
+        return status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public LoginData getData() {
+        return data;
     }
 }
