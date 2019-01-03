@@ -1,12 +1,13 @@
 package com.vjtechsolution.aiceluckywheel;
 
 public class RegisterUser {
-    private String username, namaToko, message;
+    private String username, password, namaToko, message;
     private Boolean status;
-    private Float lat, lng;
+    private Double lat, lng;
 
-    public RegisterUser(String username, String namaToko, Float lat, Float lng) {
+    public RegisterUser(String username, String password, String namaToko, Double lat, Double lng) {
         this.username = username;
+        this.password = password;
         this.namaToko = namaToko;
         this.lat = lat;
         this.lng = lng;

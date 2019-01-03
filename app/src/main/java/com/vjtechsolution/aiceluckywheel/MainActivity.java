@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements IPermissionsListe
 
             @Override
             public void onFailure(Call<UserAuth> call, Throwable t) {
-                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                 pDialog.changeAlertType(SweetAlertDialog.ERROR_TYPE);
                 pDialog.setTitleText("Login Gagal");
                 pDialog.setContentText(t.getMessage());
