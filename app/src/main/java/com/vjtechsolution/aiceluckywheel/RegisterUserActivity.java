@@ -28,11 +28,6 @@ public class RegisterUserActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_user);
 
-        pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorAccent));
-        pDialog.setTitleText("Loading");
-        pDialog.setCancelable(false);
-
         username = findViewById(R.id.daftarUsername);
         password = findViewById(R.id.daftarPassword);
         namaOutlet = findViewById(R.id.daftarNamaOutlet);
@@ -59,6 +54,11 @@ public class RegisterUserActivity extends AppCompatActivity {
         daftarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //show loading dialog
+                pDialog = new SweetAlertDialog(RegisterUserActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorAccent));
+                pDialog.setTitleText("Loading");
+                pDialog.setCancelable(false);
                 pDialog.show();
 
                 //prepare post parameter
@@ -66,8 +66,8 @@ public class RegisterUserActivity extends AppCompatActivity {
                         username.getText().toString(),
                         password.getText().toString(),
                         namaOutlet.getText().toString(),
-                        0.123123,
-                        0.121211
+                        lat,
+                        lng
                 );
 
                 postRegister(registerUser);
@@ -82,21 +82,30 @@ public class RegisterUserActivity extends AppCompatActivity {
         registerUserCall.enqueue(new Callback<RegisterUser>() {
             @Override
             public void onResponse(Call<RegisterUser> call, Response<RegisterUser> response) {
-                /*
+
                 if(response.body().getStatus()){
+                    pDialog.hide();
+                    
                     pDialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    pDialog.setTitleText("Sukses");
                     pDialog.setContentText("Data berhasil tersimpan");
-                    //pDialog.show();
+                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            pDialog.hide();
+
+                            finish();
+                        }
+                    });
+                    pDialog.show();
                 }else{
                     pDialog.changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    pDialog.setTitleText("Gagal");
                     pDialog.setContentText(response.body().getMessage());
-                    //pDialog.show();
+                    pDialog.show();
                 }
-                */
 
-                Log.d("REGISTER.USER", String.valueOf(response));
-
-                pDialog.hide();
+                Log.d("REGISTER.USER", String.valueOf(String.valueOf(response.body().getMessage())));
             }
 
             @Override
