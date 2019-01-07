@@ -116,7 +116,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
 
             case R.id.play:
                 //play
-
+                Intent intent = new Intent(DashboardActivity.this, AddSalesActivity.class);
+                startActivity(intent);
                 break;
 
             case R.id.logout:
