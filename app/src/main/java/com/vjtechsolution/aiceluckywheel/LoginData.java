@@ -2,7 +2,7 @@ package com.vjtechsolution.aiceluckywheel;
 
 public class LoginData {
     private Integer id;
-    private String username, apiToken, createdAt, updatedAt;
+    private String username, api_token, kode_asset;
 
     public Integer getId() {
         return id;
@@ -12,15 +12,11 @@ public class LoginData {
         return username;
     }
 
-    public String getApiToken() {
-        return apiToken;
+    public String getApi_token() {
+        return api_token;
     }
 
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public String getUpdatedAt() {
-        return updatedAt;
+    public String getKode_asset() {
+        return kode_asset;
     }
 }

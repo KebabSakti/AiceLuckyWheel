@@ -8,6 +8,15 @@
     android:background="@color/mainBg"
     tools:context=".RegisterUserActivity">
 
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:src="@drawable/logo_blue"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_above="@+id/detailLogin"/>
+
     <LinearLayout
         android:id="@+id/detailLogin"
         android:layout_width="match_parent"
@@ -16,6 +25,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="40dp"
+        android:layout_marginTop="10dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -91,6 +101,7 @@
             android:typeface="monospace"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAllCaps="false"
             android:text="@string/str_daftar_outlet"/>
 
     </LinearLayout>

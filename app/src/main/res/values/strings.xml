@@ -9,4 +9,6 @@
     <string name="str_detail_outlet">Detail Outlet</string>
     <string name="str_nama_outlet">Nama Outlet</string>
     <string name="str_daftar_outlet">Daftar Outlet</string>
+    <string name="key_preference">com.vjtechsolution.aice_lucky_wheel</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
 </resources>

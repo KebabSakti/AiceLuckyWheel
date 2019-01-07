@@ -1,12 +1,13 @@
 package com.vjtechsolution.aiceluckywheel;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,12 +36,16 @@ public class MainActivity extends AppCompatActivity implements IPermissionsListe
     private Boolean location;
     private Boolean camera;
 
-    SweetAlertDialog pDialog;
+    private SweetAlertDialog pDialog;
+
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        context = this;
 
         username = findViewById(R.id.loginUsername);
         password = findViewById(R.id.loginPassword);
@@ -61,23 +66,26 @@ public class MainActivity extends AppCompatActivity implements IPermissionsListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.loginButton:
-                //progress dialog
-                pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
-                pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorAccent));
-                pDialog.setTitleText("Loading");
-                pDialog.setCancelable(false);
-                pDialog.show();
-
-                //disable form login jika izin tidak diberikan
-                if(!internet || !location || !camera){
-                    Toast.makeText(MainActivity.this, "Aplikasi memerlukan izin lokasi dan kamera untuk berfungsi", Toast.LENGTH_LONG).show();
+                if(username.getText().toString().equals("") || password.getText().toString().equals("")){
+                    Toast.makeText(context, "Username dan password tidak boleh kosong", Toast.LENGTH_SHORT).show();
                 }else{
-                    UserAuth userAuth = new UserAuth(
-                            username.getText().toString(),
-                            password.getText().toString()
-                    );
+                    //progress dialog
+                    pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+                    pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorAccent));
+                    pDialog.setTitleText("Loading");
+                    pDialog.setCancelable(false);
+                    pDialog.show();
 
-                    doLogin(userAuth);
+                    if(!internet || !location || !camera){
+                        Toast.makeText(MainActivity.this, "Aplikasi memerlukan izin lokasi dan kamera untuk berfungsi", Toast.LENGTH_LONG).show();
+                    }else{
+                        UserAuth userAuth = new UserAuth(
+                                username.getText().toString(),
+                                password.getText().toString()
+                        );
+
+                        doLogin(userAuth);
+                    }
                 }
                 break;
 
@@ -97,26 +105,42 @@ public class MainActivity extends AppCompatActivity implements IPermissionsListe
             @Override
             public void onResponse(Call<UserAuth> call, Response<UserAuth> response) {
 
-                Log.d("DEBUG RES", String.valueOf(response.body().getStatus())+' '+response.body().getData().getUsername());
-                pDialog.hide();
+                if(response.code() == 200){
+                    if(response.body().getStatus()){
+                        //set user pref (session)
+                        SharedPreferences sharedPreferences = context.getSharedPreferences(getString(R.string.key_preference), Context.MODE_PRIVATE);
+                        SharedPreferences.Editor prefEdit = sharedPreferences.edit();
 
-                /*
-                if(response.body().getStatus()){
-                    //login
-                    Toast.makeText(MainActivity.this, "Okeee", Toast.LENGTH_SHORT).show();
+                        prefEdit.putString("username", response.body().getData().getUsername());
+                        prefEdit.putString("api_token", response.body().getData().getApi_token());
+                        prefEdit.putString("kode_asset", response.body().getData().getKode_asset());
+                        prefEdit.commit();
+
+                        //login
+                        pDialog.dismissWithAnimation();
+
+                        Intent dashboard = new Intent(MainActivity.this, DashboardActivity.class);
+                        startActivity(dashboard);
+
+                        finish();
+                    }else{
+                        //show error msg
+                        pDialog.changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        pDialog.setTitleText("Gagal");
+                        pDialog.setContentText(response.body().getMessage());
+                    }
                 }else{
-                    //show error msg
-                    Toast.makeText(MainActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    pDialog.changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    pDialog.setTitleText("Gagal");
+                    pDialog.setContentText("Terjadi kesalahan atau server sedang mengalami gangguan");
                 }
-                */
             }
 
             @Override
             public void onFailure(Call<UserAuth> call, Throwable t) {
                 pDialog.changeAlertType(SweetAlertDialog.ERROR_TYPE);
                 pDialog.setTitleText("Login Gagal");
-                pDialog.setContentText(t.getMessage());
-                pDialog.show();
+                pDialog.setContentText("Tidak dapat menghubungi server");
             }
         });
     }
