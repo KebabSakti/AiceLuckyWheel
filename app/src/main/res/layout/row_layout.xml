@@ -13,8 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingRight="5dp"
-        android:weightSum="2">
+        android:weightSum="20">
 
         <TextView
             android:id="@+id/namaProduk"
@@ -23,7 +22,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="5dp"
             android:typeface="monospace"
-            android:layout_weight="2"/>
+            android:layout_weight="17"/>
 
         <ImageView
             android:id="@+id/minQty"
@@ -35,14 +34,13 @@
 
         <TextView
             android:id="@+id/qty"
-            android:layout_width="wrap_content"
+            android:layout_width="30dp"
             android:layout_height="40dp"
-            android:hint="0"
+            android:text="0"
             android:layout_gravity="center"
+            android:textAlignment="center"
             android:gravity="center"
             android:typeface="monospace"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_weight="1"/>
 
         <ImageView

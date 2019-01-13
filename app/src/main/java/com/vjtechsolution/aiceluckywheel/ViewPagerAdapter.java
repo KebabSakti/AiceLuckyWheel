@@ -13,7 +13,8 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
 
         fragments = new Fragment[] {
                 new ProductListFragment(),
-                new CustomerFotoFragment()
+                new CustomerFotoFragment(),
+                new CustomerBioFragment()
         };
     }
 

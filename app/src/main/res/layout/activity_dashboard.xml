@@ -50,6 +50,7 @@
                     android:id="@+id/dimainkan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:typeface="monospace"
                     android:layout_gravity="center"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
@@ -80,6 +81,7 @@
                     android:id="@+id/dispin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:typeface="monospace"
                     android:layout_gravity="center"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
@@ -110,6 +112,7 @@
                     android:id="@+id/kustomer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:typeface="monospace"
                     android:layout_gravity="center"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
@@ -148,6 +151,7 @@
                     android:id="@+id/menang"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:typeface="monospace"
                     android:layout_gravity="center"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
@@ -178,6 +182,7 @@
                     android:id="@+id/hadiah"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:typeface="monospace"
                     android:layout_gravity="center"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
@@ -205,10 +210,10 @@
                     android:layout_marginTop="20dp"/>
 
                 <TextView
-
                     android:id="@+id/kalah"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:typeface="monospace"
                     android:layout_gravity="center"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
@@ -245,6 +250,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:typeface="monospace"
                     android:layout_gravity="center"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
@@ -256,6 +262,7 @@
 
         <Button
             android:id="@+id/logout"
+            android:typeface="monospace"
             style="@style/Base.Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

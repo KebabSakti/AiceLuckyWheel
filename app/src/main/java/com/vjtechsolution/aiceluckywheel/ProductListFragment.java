@@ -2,6 +2,7 @@ package com.vjtechsolution.aiceluckywheel;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,11 +11,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class ProductListFragment extends Fragment {
@@ -25,14 +29,15 @@ public class ProductListFragment extends Fragment {
 
     private List<ProductData> productDataList;
 
-    private ImageView plusQty, minQty;
-    private TextView qty;
-
     private Integer n = 0;
 
-    private Context context;
-
     private View v;
+
+    private String username, api_token, kode_asset;
+    private Context context;
+    private SharedPreferences sharedPreferences;
+
+    private SweetAlertDialog pDialog;
 
     public ProductListFragment() {
         // Required empty public constructor
@@ -53,28 +58,55 @@ public class ProductListFragment extends Fragment {
 
         context = getContext();
 
-        productDataList = new ArrayList<>();
+        sharedPreferences = context.getSharedPreferences(getString(R.string.key_preference), Context.MODE_PRIVATE);
+        username = sharedPreferences.getString("username","");
+        api_token = sharedPreferences.getString("api_token", "");
+        kode_asset = sharedPreferences.getString("kode_asset", "");
 
-        for(int i=0;i<100;i++){
-            productDataList.add(new ProductData(String.valueOf(i), "Product_"+String.valueOf(i)));
-        }
+        ProductModel productModel = new ProductModel(
+                username,
+                api_token,
+                kode_asset
+        );
 
-        recyclerView = getActivity().findViewById(R.id.rv);
-        recyclerView.setHasFixedSize(true);
+        getAllProducts(productModel);
+    }
 
-        layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
+    private void getAllProducts(ProductModel productModel) {
+        //progress dialog
+        pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
+        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorAccent));
+        pDialog.setTitleText("Loading");
+        pDialog.setCancelable(false);
+        pDialog.show();
 
-        adapter = new ProductListAdapter(productDataList);
+        GetProduct getProduct = RetrofitBuilderGenerator.createService(GetProduct.class);
+        Call<ProductModel> getProductCall = getProduct.productModel(productModel);
 
-        //recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        getProductCall.enqueue(new Callback<ProductModel>() {
+            @Override
+            public void onResponse(Call<ProductModel> call, Response<ProductModel> response) {
+                if(response.code() == 200){
+                    productDataList = response.body().getProductDataList();
 
-        recyclerView.setAdapter(adapter);
+                    recyclerView = getActivity().findViewById(R.id.rv);
+                    recyclerView.setHasFixedSize(true);
 
-        //RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) recyclerView.getTag();
+                    layoutManager = new LinearLayoutManager(context);
+                    recyclerView.setLayoutManager(layoutManager);
 
-        //Toast.makeText(context, String.valueOf(viewHolder.getAdapterPosition()), Toast.LENGTH_SHORT).show();
+                    adapter = new ProductListAdapter(productDataList);
+                    recyclerView.setAdapter(adapter);
 
-        //Log.d("DBU", String.valueOf(viewHolder));
+                    pDialog.dismissWithAnimation();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ProductModel> call, Throwable t) {
+                pDialog.dismissWithAnimation();
+                Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

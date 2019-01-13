@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitBuilderGenerator {
 
-    private static final String BASE_URL = "http://192.168.2.19:8000";
+    private static final String BASE_URL = "http://192.168.2.21:8000";
 
     private static Retrofit.Builder builder
             = new Retrofit.Builder()

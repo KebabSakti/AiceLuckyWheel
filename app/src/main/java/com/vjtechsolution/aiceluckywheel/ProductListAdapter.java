@@ -2,12 +2,13 @@ package com.vjtechsolution.aiceluckywheel;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
@@ -15,16 +16,10 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
 
     private List<ProductData> productDataList;
     private Integer n = 0;
+    //private HashMap<String, Integer> prodMap = new HashMap<>();
 
-    /*
-    private View.OnClickListener onItemClickListener;
 
-    public void setItemClickListener(View.OnClickListener clickListener) {
-        onItemClickListener = clickListener;
-    }
-    */
-
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public TextView textView;
         public ImageView plusQty, minQty;
@@ -40,15 +35,52 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
             minQty = view.findViewById(R.id.minQty);
             qty = view.findViewById(R.id.qty);
 
-            //view.setOnClickListener(this);
+            plusQty.setOnClickListener(this);
+            minQty.setOnClickListener(this);
         }
 
-        /*
+
         @Override
         public void onClick(View v) {
-            Log.d("CLICK ITEM", "Click click "+String.valueOf(v.getId()));
+
+            //int pos = getAdapterPosition();
+            //ProductData asd = productDataList.get(pos);
+
+            switch (v.getId()){
+                case R.id.plusQty:
+                    n = Integer.valueOf(qty.getText().toString()) + 1;
+                    qty.setText(String.valueOf(n));
+
+                    /*
+                    prodMap.put(textView.getText().toString(), n);
+
+                    Set set = prodMap.entrySet();
+                    Iterator iterator = set.iterator();
+
+                    while (iterator.hasNext()) {
+                        Map.Entry mEntry = (Map.Entry) iterator.next();
+
+                        Log.d("RET DATA", String.valueOf(mEntry)+" "+String.valueOf(prodMap.size()));
+                    }
+
+                    Log.d("RET DATA", String.valueOf(prodMap.size()));
+                    */
+
+                    break;
+
+                case R.id.minQty:
+                    if(Integer.valueOf(qty.getText().toString()) != 0){
+                        n = Integer.valueOf(qty.getText().toString()) - 1;
+                        qty.setText(String.valueOf(n));
+                    }
+                    break;
+            }
+
+
+            EventBus.getDefault().post(new EvBusProduct(textView.getText().toString(), n));
+
         }
-        */
+
     }
 
     public ProductListAdapter(List<ProductData> productDataList) {
@@ -68,6 +100,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
         ProductData productData = productDataList.get(position);
         holder.textView.setText(productData.getNama());
 
+        /*
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
