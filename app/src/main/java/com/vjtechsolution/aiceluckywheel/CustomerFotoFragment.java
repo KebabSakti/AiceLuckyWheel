@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -29,6 +30,7 @@ public class CustomerFotoFragment extends Fragment {
     private SharedPreferences sharedPreferences;
     private ImageView goCamera;
     private ImageView fotoContainer;
+    private TextView goCameraText;
     private View v;
 
     public CustomerFotoFragment() {
@@ -56,6 +58,7 @@ public class CustomerFotoFragment extends Fragment {
 
         goCamera = v.findViewById(R.id.goCamera);
         fotoContainer = v.findViewById(R.id.fotoContainer);
+        goCameraText = v.findViewById(R.id.goCameraText);
 
         goCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,10 +71,14 @@ public class CustomerFotoFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (resultCode == Activity.RESULT_OK) switch (requestCode) {
             case 1:
+                goCameraText.setText("Sentuh untuk mengganti foto");
                 String foto = data.getStringExtra("image");
-                Picasso.get().load(foto).into(fotoContainer);
+                File img = new File(foto);
+                Picasso.get().load(img).into(fotoContainer);
 
                 Log.d("FILE", foto);
                 break;

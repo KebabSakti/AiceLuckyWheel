@@ -26,8 +26,11 @@
             android:layout_gravity="center"/>
 
         <TextView
+            android:id="@+id/goCameraText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="#CCC"
+            android:padding="5dp"
             android:text="Belum ada foto, sentuh untuk ambil foto"/>
 
     </LinearLayout>
