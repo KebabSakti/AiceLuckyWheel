@@ -105,6 +105,7 @@ public class ProductListFragment extends Fragment {
             @Override
             public void onFailure(Call<ProductModel> call, Throwable t) {
                 pDialog.dismissWithAnimation();
+
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
