@@ -17,4 +17,5 @@ public class CameraActivity extends AppCompatActivity {
         cameraView = findViewById(R.id.camera);
         cameraView.setLifecycleOwner(this);
     }
+
 }

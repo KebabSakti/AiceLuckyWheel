@@ -46,6 +46,6 @@ dependencies {
     //event bus
     implementation 'org.greenrobot:eventbus:3.1.1'
     //cam view
-    implementation 'com.otaliastudios:cameraview:2.0.0-beta02'
+    api 'com.otaliastudios:cameraview:2.0.0-beta02'
 
 }
