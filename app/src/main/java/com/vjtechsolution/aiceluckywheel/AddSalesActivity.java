@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
@@ -29,6 +30,9 @@ public class AddSalesActivity extends AppCompatActivity {
     private CustomerSalesDetail customerSalesDetail;
     private HashMap<String, Integer> custProduct = new HashMap<>();
 
+    private TextView toolbarHeading;
+    private Integer page = 0;
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,7 @@ public class AddSalesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        toolbarHeading = findViewById(R.id.toolbarSalesHeading);
         viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
 
@@ -53,25 +58,28 @@ public class AddSalesActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Integer page;
-                if(viewPager.getCurrentItem() != 2){
-                    page = viewPager.getCurrentItem()+1;
+                if(page != 1){
+                    next.setText("Mulai Main");
+
+                    page += 1;
                     viewPager.setCurrentItem(page, true);
                 }else{
                     Toast.makeText(AddSalesActivity.this, "Mulai maennnn", Toast.LENGTH_SHORT).show();
                 }
 
-                Toast.makeText(AddSalesActivity.this, String.valueOf(viewPager.getCurrentItem()), Toast.LENGTH_SHORT).show();
+                setToolbarHeading(page);
             }
         });
 
         prev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Integer page = (viewPager.getCurrentItem() == 0) ? viewPager.getCurrentItem():viewPager.getCurrentItem()-1;
-                viewPager.setCurrentItem(0, true);
+                next.setText("Next");
 
-                Toast.makeText(AddSalesActivity.this, String.valueOf(viewPager.getCurrentItem()), Toast.LENGTH_SHORT).show();
+                page = (page == 0) ? page : page-1;
+                viewPager.setCurrentItem(page, true);
+
+                setToolbarHeading(page);
             }
         });
 
@@ -82,6 +90,24 @@ public class AddSalesActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setToolbarHeading(int currentItem) {
+
+        //set toolbar text
+        String heading ="";
+
+        switch (currentItem){
+            case 0:
+                heading = "Pilih Produk";
+                break;
+
+            case 1:
+                heading = "Ambil Foto Kustomer";
+                break;
+        }
+
+        toolbarHeading.setText(heading);
     }
 
     @Override

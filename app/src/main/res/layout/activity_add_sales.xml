@@ -17,11 +17,12 @@
         android:fitsSystemWindows="true">
 
         <TextView
+            android:id="@+id/toolbarSalesHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#FFF"
             android:typeface="monospace"
-            android:text="Data Kustomer"
+            android:text="Pilih Produk"
             android:layout_gravity="center"/>
 
     </android.support.v7.widget.Toolbar>

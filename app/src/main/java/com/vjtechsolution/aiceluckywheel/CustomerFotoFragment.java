@@ -8,11 +8,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -80,7 +80,8 @@ public class CustomerFotoFragment extends Fragment {
                 File img = new File(foto);
                 Picasso.get().load(img).into(fotoContainer);
 
-                Log.d("FILE", foto);
+                LinearLayout bioContainer = v.findViewById(R.id.bioContainer);
+                bioContainer.setVisibility(View.VISIBLE);
                 break;
         }
     }
