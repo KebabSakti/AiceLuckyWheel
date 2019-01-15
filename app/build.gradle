@@ -46,12 +46,7 @@ dependencies {
     //event bus
     implementation 'org.greenrobot:eventbus:3.1.1'
     //cam view
-<<<<<<< HEAD
-    api 'com.otaliastudios:cameraview:2.0.0-beta02'
-=======
     implementation 'com.otaliastudios:cameraview:1.6.1'
     //asynjob
     implementation 'com.arasthel:asyncjob-library:1.0.3'
->>>>>>> 2c3c114
-
 }

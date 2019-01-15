@@ -52,7 +52,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="10dp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:background="@drawable/form_field"
                 android:hint="@string/str_username"/>
 
             <EditText
@@ -62,6 +65,8 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:inputType="textPassword"
+                android:maxLines="1"
+                android:background="@drawable/form_field"
                 android:hint="@string/str_password"/>
 
         </LinearLayout>
@@ -90,7 +95,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="10dp"
+                android:inputType="text"
+                android:maxLines="1"
+                android:background="@drawable/form_field"
                 android:hint="@string/str_nama_outlet"/>
 
         </LinearLayout>
@@ -102,6 +110,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAllCaps="false"
+            android:background="@drawable/styled_button"
             android:text="@string/str_daftar_outlet"/>
 
     </LinearLayout>
