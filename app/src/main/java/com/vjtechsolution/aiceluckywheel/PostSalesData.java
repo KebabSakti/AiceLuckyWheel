@@ -2,19 +2,28 @@ package com.vjtechsolution.aiceluckywheel;
 
 import java.util.ArrayList;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
+import retrofit2.http.Query;
 
 public interface PostSalesData {
 
-   @FormUrlEncoded
-   @POST("game/register")
-   Call<SLS> salesData(
-           @Field("username") String username,
-           @Field("api_token") String api_token,
-           @Field("kode_asset") String kode_asset,
-           @Field("data[]") ArrayList<String> listData
+   @Multipart
+   @POST("test")
+   Call<SalesData> postIt(
+           @Part("username") RequestBody username,
+           @Part("api_token") RequestBody api_token,
+           @Part("kode_asset") RequestBody kode_asset,
+           @Part MultipartBody.Part foto,
+           @Part("nama") RequestBody nama,
+           @Part("no_telp") RequestBody no_telp,
+           @Part("session") RequestBody session,
+           @Query("products[]") ArrayList<String> products,
+           @Query("qty_products[]") ArrayList<Integer> qtyProducts
    );
+
 }

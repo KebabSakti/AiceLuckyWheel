@@ -8,9 +8,14 @@ import java.util.ArrayList;
 public class SLS {
     @SerializedName("data[]")
     @Expose
-    private String username, api_token, kode_asset, message;
-    private ArrayList<String> data;
-    boolean status;
+    private ArrayList<String> datas;
+    private String status;
 
+    public SLS(ArrayList<String> datas) {
+        this.datas = datas;
+    }
 
+    public String getStatus() {
+        return status;
+    }
 }
