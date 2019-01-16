@@ -76,9 +76,7 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
                     break;
             }
 
-
-            EventBus.getDefault().post(new EvBusProduct(textView.getText().toString(), n));
-
+            EventBus.getDefault().post(new EvBusProduct(textView.getText().toString(), n,"","",""));
         }
 
     }
