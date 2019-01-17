@@ -7,25 +7,86 @@
     android:layout_height="match_parent"
     tools:context=".GameActivity">
 
-    <ImageView
-        android:id="@+id/pointer"
-        android:src="@drawable/pointer"
-        android:layout_above="@+id/wheel"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
+    <!--
+    <FrameLayout
+        android:id="@+id/fl2"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
-" />
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="380dp"
+            android:layout_gravity="center"
+            android:src="@drawable/wheel_stand"/>
+
+        <FrameLayout
+            android:id="@+id/fl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/wheel"
+                android:layout_width="wrap_content"
+                android:layout_height="310dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="45dp"
+                android:src="@drawable/wheel_main"/>
+
+            <TextView
+                android:id="@+id/tv1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PUTAR"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:textColor="#FFF"
+                android:layout_gravity="center"/>
+
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/pointer"
+            android:src="@drawable/wheel_pointer"
+            android:layout_above="@+id/fl"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_gravity="top|center"
+            android:layout_marginTop="40dp"/>
+
+        <Button
+            android:id="@+id/spin_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Spin"
+            android:background="@drawable/buttonstyle"
+            android:textColor="#FFF"
+            android:layout_gravity="center|bottom"
+            android:layout_marginBottom="40dp"
+            android:layout_below="@+id/fl2"/>
+
+    </FrameLayout>
+    -->
+
     <ImageView
         android:id="@+id/wheel"
         android:layout_width="wrap_content"
         android:layout_height="300dp"
-        android:src="@drawable/wheel"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"/>
+        android:src="@drawable/wheel_main"/>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/wheel"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="-135dp"
+        android:src="@drawable/wheel_pointer"/>
 
     <Button
+        android:id="@+id/spin_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Spin"
@@ -33,6 +94,7 @@
         android:textColor="#FFF"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:layout_marginTop="20dp"
         android:layout_below="@+id/wheel"/>
 
 </RelativeLayout>
