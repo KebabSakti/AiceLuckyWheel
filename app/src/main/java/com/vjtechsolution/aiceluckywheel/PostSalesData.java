@@ -13,7 +13,7 @@ import retrofit2.http.Query;
 public interface PostSalesData {
 
    @Multipart
-   @POST("test")
+   @POST("api/game/register")
    Call<SalesData> postIt(
            @Part("username") RequestBody username,
            @Part("api_token") RequestBody api_token,

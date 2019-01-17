@@ -20,12 +20,12 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.MediaType;
@@ -83,7 +83,7 @@ public class AddSalesActivity extends AppCompatActivity {
         pDialog.setTitleText("Loading");
         pDialog.setCancelable(false);
 
-        session = String.valueOf(UUID.randomUUID().hashCode());
+        session = new SimpleDateFormat("ddMMyyyyHHmmss", Locale.ENGLISH).format(new Date());
         toolbarHeading = findViewById(R.id.toolbarSalesHeading);
         viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
@@ -110,16 +110,22 @@ public class AddSalesActivity extends AppCompatActivity {
                             ArrayList<String> products = new ArrayList<>();
                             ArrayList<Integer> qtyProducts = new ArrayList<>();
 
-                            Set set = custProduct.entrySet();
-                            Iterator iterator = set.iterator();
+                            //Log.d("RES", String.valueOf(custProduct));
 
+                            for(Map.Entry<String, Integer> pair : custProduct.entrySet()){
+                                products.add(pair.getKey());
+                                qtyProducts.add(pair.getValue());
+                            }
+
+                            /*
                             while (iterator.hasNext()) {
                                 Map.Entry mEntry = (Map.Entry) iterator.next();
 
                                 products.add(String.valueOf(mEntry.getKey()));
                                 qtyProducts.add(Integer.valueOf(String.valueOf(mEntry.getValue())));
-                                //iterator.remove();
+                                iterator.remove();
                             }
+                            */
 
                             postData(username, api_token, kode_asset, foto, nama, no_telp, products, qtyProducts);
 
@@ -223,20 +229,25 @@ public class AddSalesActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(EvBusProduct evBusProduct){
-        sumProd = 0;
-        //produk dipilih
-        custProduct.put(evBusProduct.getProduct(), evBusProduct.getQty());
+        if(!evBusProduct.getProduct().equals("")){
+            sumProd = 0;
+            //produk dipilih
+            custProduct.put(evBusProduct.getProduct(), evBusProduct.getQty());
 
-        for(Integer i : custProduct.values()){
-            sumProd += i;
+            Log.d("RES", String.valueOf(custProduct));
+
+            for(Integer i : custProduct.values()){
+                sumProd += i;
+            }
+
+        }else {
+            foto = evBusProduct.getFoto();
+            nama = evBusProduct.getNama();
+            no_telp = evBusProduct.getNo_telp();
+
+            Log.d("RETTT.PRO", String.valueOf(custProduct) + " Size : " + String.valueOf(sumProd));
+            Log.d("RETTT.KUST", nama + " " + no_telp + " : " + foto);
         }
-
-        foto = evBusProduct.getFoto();
-        nama = evBusProduct.getNama();
-        no_telp = evBusProduct.getNo_telp();
-
-        Log.d("RETTT.PRO", String.valueOf(custProduct)+" Size : "+String.valueOf(sumProd));
-        Log.d("RETTT.KUST", nama+" "+no_telp+" : "+foto);
     }
 
     @Override
