@@ -1,5 +1,6 @@
 package com.vjtechsolution.aiceluckywheel;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -12,11 +13,23 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
 
-    private Button spinBtn;
+    private TextView kesempatan, drawn, win, lost;
+
+    private Integer drawnTotal;
+    private Integer total;
+    private Integer winTotal;
+    private Integer lostTotal;
+
+    private ArrayList<String> spinRes = new ArrayList<>();
+
+    private Intent intent;
+
+    private Button spinBtn, endBtn;
     private FrameLayout wheel;
 
     private FrameLayout frameLayout;
@@ -39,8 +52,25 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+        intent = getIntent();
+
+        total = intent.getIntExtra("total", 0);
+        drawnTotal = 0;
+        winTotal = 0;
+        lostTotal = 0;
+
+        kesempatan = findViewById(R.id.kesempatan);
+        drawn = findViewById(R.id.drawn);
+        win = findViewById(R.id.win);
+        lost = findViewById(R.id.lost);
         wheel = findViewById(R.id.wheel);
         spinBtn = findViewById(R.id.spin_btn);
+        endBtn = findViewById(R.id.res_btn);
+
+        kesempatan.setText("Chance : "+total);
+        drawn.setText("Drawn : "+drawnTotal);
+        win.setText("Win : "+winTotal);
+        lost.setText("Lost : "+lostTotal);
 
         tv1 = findViewById(R.id.tv1);
         tv2 = findViewById(R.id.tv2);
@@ -80,40 +110,109 @@ public class GameActivity extends AppCompatActivity {
         tv6.setY(100);
         tv6.setRotation(60);
 
+        tv7.setText("Zonk");
+        tv7.setX(0);
+        tv7.setY(120);
+        tv7.setRotation(90);
+
+        tv8.setText("Zonk");
+        tv8.setX(-70);
+        tv8.setY(110);
+        tv8.setRotation(300);
+
+        tv9.setText("Zonk");
+        tv9.setX(-110);
+        tv9.setY(60);
+        tv9.setRotation(-30);
+
+        tv10.setText("Zonk");
+        tv10.setX(-120);
+        tv10.setY(-4);
+        tv10.setRotation(0);
+
+        tv11.setText("Zonk");
+        tv11.setX(-110);
+        tv11.setY(-65);
+        tv11.setRotation(25);
+
+        tv12.setText("Zonk");
+        tv12.setX(-60);
+        tv12.setY(-110);
+        tv12.setRotation(60);
+
         spinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                degreeOld = degree % 360;
-                // we calculate random angle for rotation of our wheel
-                degree = RANDOM.nextInt(360) + 1080;
-                // rotation effect on the center of the wheel
-                RotateAnimation rotateAnim = new RotateAnimation(degreeOld, degree,
-                        RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-                rotateAnim.setDuration(3600);
-                rotateAnim.setFillAfter(true);
-                rotateAnim.setInterpolator(new DecelerateInterpolator());
-                rotateAnim.setAnimationListener(new Animation.AnimationListener() {
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                        // we empty the result text view when the animation start
-                        spinBtn.setEnabled(false);
-                    }
+                if(total < 1){
+                    Toast.makeText(GameActivity.this, "Kesempatan anda telah habis", Toast.LENGTH_SHORT).show();
+                }else {
+                    degreeOld = degree % 360;
+                    // we calculate random angle for rotation of our wheel
+                    degree = RANDOM.nextInt(360) + 2000;
+                    // rotation effect on the center of the wheel
+                    RotateAnimation rotateAnim = new RotateAnimation(degreeOld, degree,
+                            RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
+                    rotateAnim.setDuration(3600);
+                    rotateAnim.setFillAfter(true);
+                    rotateAnim.setInterpolator(new DecelerateInterpolator());
+                    rotateAnim.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
+                            // we empty the result text view when the animation start
+                            total -= 1;
+                            drawnTotal += 1;
 
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        // we display the correct sector pointed by the triangle at the end of the rotate animation
-                        spinBtn.setEnabled(true);
-                        Toast.makeText(GameActivity.this, String.valueOf(getSector(360 - (degree % 360))), Toast.LENGTH_SHORT).show();
-                    }
+                            kesempatan.setText("Chance : " + total);
+                            drawn.setText("Drawn : " + drawnTotal);
 
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
+                            spinBtn.setText("Memutar..");
+                            spinBtn.setEnabled(false);
+                        }
 
-                    }
-                });
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            // we display the correct sector pointed by the triangle at the end of the rotate animation
+                            String result = getSector(360 - (degree % 360));
 
-                // we start the animation
-                wheel.startAnimation(rotateAnim);
+                            if(result.equals("Zonk")){
+                                lostTotal += 1;
+                            }else{
+                                winTotal += 1;
+                            }
+
+                            spinRes.add(result);
+
+                            win.setText("Win : "+winTotal);
+                            lost.setText("Lost : "+lostTotal);
+
+                            spinBtn.setText("Putar Roda");
+                            spinBtn.setEnabled(true);
+
+                            Toast.makeText(GameActivity.this, result, Toast.LENGTH_SHORT).show();
+
+                            if(total < 1){
+                                spinBtn.setVisibility(View.GONE);
+                                endBtn.setVisibility(View.VISIBLE);
+                            }
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
+
+                    // we start the animation
+                    wheel.startAnimation(rotateAnim);
+                }
+            }
+        });
+
+        //akhiri game dan launch halaman record
+        endBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(GameActivity.this, String.valueOf(spinRes), Toast.LENGTH_SHORT).show();
             }
         });
     }

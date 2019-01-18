@@ -117,16 +117,6 @@ public class AddSalesActivity extends AppCompatActivity {
                                 qtyProducts.add(pair.getValue());
                             }
 
-                            /*
-                            while (iterator.hasNext()) {
-                                Map.Entry mEntry = (Map.Entry) iterator.next();
-
-                                products.add(String.valueOf(mEntry.getKey()));
-                                qtyProducts.add(Integer.valueOf(String.valueOf(mEntry.getValue())));
-                                iterator.remove();
-                            }
-                            */
-
                             postData(username, api_token, kode_asset, foto, nama, no_telp, products, qtyProducts);
 
                         }
@@ -178,12 +168,12 @@ public class AddSalesActivity extends AppCompatActivity {
         salesDataCallback.enqueue(new Callback<SalesData>() {
             @Override
             public void onResponse(Call<SalesData> call, Response<SalesData> response) {
-                Log.d("RESDATA", String.valueOf(response.body().getMessage()));
+                //Log.d("RESDATA", String.valueOf(response.body().getMessage()));
 
-                /*
                 if(response.code() == 200){
                     Intent intent = new Intent(AddSalesActivity.this, GameActivity.class);
                     intent.putExtra("session", session);
+                    intent.putExtra("total", sumProd);
                     startActivity(intent);
 
                     pDialog.dismissWithAnimation();
@@ -194,15 +184,7 @@ public class AddSalesActivity extends AppCompatActivity {
                     pDialog.setTitleText("Gagal");
                     pDialog.setContentText(response.message());
                 }
-                */
 
-                Intent intent = new Intent(AddSalesActivity.this, GameActivity.class);
-                intent.putExtra("session", session);
-                startActivity(intent);
-
-                pDialog.dismissWithAnimation();
-
-                finish();
             }
 
             @Override
@@ -255,8 +237,8 @@ public class AddSalesActivity extends AppCompatActivity {
             nama = evBusProduct.getNama();
             no_telp = evBusProduct.getNo_telp();
 
-            Log.d("RETTT.PRO", String.valueOf(custProduct) + " Size : " + String.valueOf(sumProd));
-            Log.d("RETTT.KUST", nama + " " + no_telp + " : " + foto);
+            //Log.d("RETTT.PRO", String.valueOf(custProduct) + " Size : " + String.valueOf(sumProd));
+            //Log.d("RETTT.KUST", nama + " " + no_telp + " : " + foto);
         }
     }
 

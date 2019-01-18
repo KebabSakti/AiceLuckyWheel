@@ -5,7 +5,61 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradien_bg"
     tools:context=".GameActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="4"
+        android:layout_above="@+id/pointer">
+
+        <TextView
+            android:id="@+id/kesempatan"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Chance : 0"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#EEE"
+            android:textStyle="bold"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/win"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Win : 0"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#EEE"
+            android:textStyle="bold"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/lost"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Lost : 0"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#EEE"
+            android:textStyle="bold"
+            android:layout_weight="1"/>
+
+        <TextView
+            android:id="@+id/drawn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Draw : 0"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="#EEE"
+            android:textStyle="bold"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
 
     <ImageView
         android:id="@+id/pointer"
@@ -164,11 +218,84 @@
         android:id="@+id/spin_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Spin"
+        android:text="Putar Roda"
         android:background="@drawable/buttonstyle"
         android:textColor="#FFF"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
+        android:textAllCaps="false"
         android:layout_below="@+id/wheelCont"/>
+
+    <!-- <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/wheelCont">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Win"
+                android:textStyle="bold"
+                android:textColor="#EEE"
+                android:typeface="monospace"/>
+
+            <TextView
+                android:id="@+id/win_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:typeface="monospace"
+                android:textStyle="bold"
+                android:textColor="#EEE"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Lost"
+                android:textStyle="bold"
+                android:textColor="#EEE"
+                android:typeface="monospace"/>
+
+            <TextView
+                android:id="@+id/lost_result"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:typeface="monospace"
+                android:textStyle="bold"
+                android:textColor="#EEE"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--
+    <Button
+        android:id="@+id/res_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Akhiri Permainan"
+        android:background="@drawable/buttonstyle"
+        android:textColor="#FFF"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textAllCaps="false"
+        android:visibility="gone"
+        android:layout_below="@+id/wheelCont"/>
+        -->
 
 </RelativeLayout>
