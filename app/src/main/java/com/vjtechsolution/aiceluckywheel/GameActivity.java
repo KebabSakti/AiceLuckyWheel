@@ -2,13 +2,13 @@ package com.vjtechsolution.aiceluckywheel;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,10 +17,15 @@ import java.util.Random;
 public class GameActivity extends AppCompatActivity {
 
     private Button spinBtn;
-    private ImageView wheel;
+    private FrameLayout wheel;
 
     private FrameLayout frameLayout;
-    private TextView tv1;
+    private TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7, tv8, tv9, tv10, tv11, tv12;
+
+    // sectors of our wheel (look at the image to see the sectors)
+    private static final String[] sectors = {
+            "Milk Melon","Bingo","Funky Susu","Nanas","Zonk","Zonk","Zonk","Zonk","Zonk","Zonk","Zonk","Ice Sugar"
+    };
 
     // We create a Random instance to make our wheel spin randomly
     private static final Random RANDOM = new Random();
@@ -28,11 +33,6 @@ public class GameActivity extends AppCompatActivity {
     // We have 37 sectors on the wheel, we divide 360 by this value to have angle for each sector
     // we divide by 2 to have a half sector
     private static final float HALF_SECTOR = 360f / 12f / 2f;
-
-    // sectors of our wheel (look at the image to see the sectors)
-    private static final String[] sectors = {
-            "Kuning","Himut","Hitut","Bimut","Bimut2","Bitut","Bitut2","Ungu","PINK","Merah","OrangeTut","Orangec3"
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +42,43 @@ public class GameActivity extends AppCompatActivity {
         wheel = findViewById(R.id.wheel);
         spinBtn = findViewById(R.id.spin_btn);
 
-        //frameLayout = findViewById(R.id.fl);
-        //tv1 = findViewById(R.id.tv1);
+        tv1 = findViewById(R.id.tv1);
+        tv2 = findViewById(R.id.tv2);
+        tv3 = findViewById(R.id.tv3);
+        tv4 = findViewById(R.id.tv4);
+        tv5 = findViewById(R.id.tv5);
+        tv6 = findViewById(R.id.tv6);
+        tv7 = findViewById(R.id.tv7);
+        tv8 = findViewById(R.id.tv8);
+        tv9 = findViewById(R.id.tv9);
+        tv10 = findViewById(R.id.tv10);
+        tv11 = findViewById(R.id.tv11);
+        tv12 = findViewById(R.id.tv12);
 
-        /*
-        tv1.setX(0);
-        tv1.setY(-250);
-        tv1.setRotation(90);
+        tv1.setX(1);
+        tv1.setY(-170);
+        tv1.setRotation(-90);
 
-        tv1.setX(45);
-        tv1.setY(-250);
-        tv1.setRotation(100);
-        */
+        tv2.setX(80);
+        tv2.setY(-150);
+        tv2.setRotation(-60);
+
+        tv3.setX(125);
+        tv3.setY(-75);
+        tv3.setRotation(-35);
+
+        tv4.setX(180);
+        tv4.setY(-5);
+        tv4.setRotation(0);
+
+        tv5.setX(120);
+        tv5.setY(65);
+        tv5.setRotation(35);
+
+        tv6.setText("Zonk");
+        tv6.setX(60);
+        tv6.setY(100);
+        tv6.setRotation(60);
 
         spinBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,13 +96,13 @@ public class GameActivity extends AppCompatActivity {
                     @Override
                     public void onAnimationStart(Animation animation) {
                         // we empty the result text view when the animation start
-                        //resultTv.setText("");
+                        spinBtn.setEnabled(false);
                     }
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         // we display the correct sector pointed by the triangle at the end of the rotate animation
-                        //resultTv.setText(getSector(360 - (degree % 360)));
+                        spinBtn.setEnabled(true);
                         Toast.makeText(GameActivity.this, String.valueOf(getSector(360 - (degree % 360))), Toast.LENGTH_SHORT).show();
                     }
 
@@ -113,6 +138,10 @@ public class GameActivity extends AppCompatActivity {
             // That's all !
             // In the second part, you will learn how to add some bets on the table to play to the Roulette Game :)
             // Subscribe and stay tuned !
+
+            Log.d("DEGREE", String.valueOf(degrees));
+            Log.d("START", String.valueOf(start));
+            Log.d("END", String.valueOf(end));
 
         } while (text == null  &&  i < sectors.length);
 

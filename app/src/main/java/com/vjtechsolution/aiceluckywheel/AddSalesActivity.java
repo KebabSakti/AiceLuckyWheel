@@ -180,6 +180,7 @@ public class AddSalesActivity extends AppCompatActivity {
             public void onResponse(Call<SalesData> call, Response<SalesData> response) {
                 Log.d("RESDATA", String.valueOf(response.body().getMessage()));
 
+                /*
                 if(response.code() == 200){
                     Intent intent = new Intent(AddSalesActivity.this, GameActivity.class);
                     intent.putExtra("session", session);
@@ -193,11 +194,20 @@ public class AddSalesActivity extends AppCompatActivity {
                     pDialog.setTitleText("Gagal");
                     pDialog.setContentText(response.message());
                 }
+                */
+
+                Intent intent = new Intent(AddSalesActivity.this, GameActivity.class);
+                intent.putExtra("session", session);
+                startActivity(intent);
+
+                pDialog.dismissWithAnimation();
+
+                finish();
             }
 
             @Override
             public void onFailure(Call<SalesData> call, Throwable t) {
-
+                Toast.makeText(AddSalesActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                 pDialog.dismissWithAnimation();
             }
         });
