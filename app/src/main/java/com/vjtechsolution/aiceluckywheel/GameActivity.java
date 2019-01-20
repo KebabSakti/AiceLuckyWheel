@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
@@ -37,8 +38,12 @@ public class GameActivity extends AppCompatActivity {
 
     // sectors of our wheel (look at the image to see the sectors)
     private static final String[] sectors = {
-            "Milk Melon","Bingo","Funky Susu","Nanas","Zonk","Zonk","Zonk","Zonk","Zonk","Zonk","Zonk","Ice Sugar"
+            "Ice Sugar","Bingo","Funky Susu","Nanas","Zonk","Zonk","Mochi","Zonk","Zonk","Zonk","Zonk","Milk Melon"
     };
+
+    private ArrayList<String>  sectorList = new ArrayList<>();
+
+    private ArrayList<String> shuffled;
 
     // We create a Random instance to make our wheel spin randomly
     private static final Random RANDOM = new Random();
@@ -58,6 +63,14 @@ public class GameActivity extends AppCompatActivity {
         drawnTotal = 0;
         winTotal = 0;
         lostTotal = 0;
+
+        for(int i=0;i<sectors.length;i++){
+            sectorList.add(sectors[i]);
+        }
+
+        Collections.shuffle(sectorList);
+
+        shuffled = sectorList;
 
         kesempatan = findViewById(R.id.kesempatan);
         drawn = findViewById(R.id.drawn);
@@ -85,57 +98,62 @@ public class GameActivity extends AppCompatActivity {
         tv11 = findViewById(R.id.tv11);
         tv12 = findViewById(R.id.tv12);
 
+        tv1.setText(shuffled.get(11));
         tv1.setX(1);
         tv1.setY(-170);
         tv1.setRotation(-90);
 
+        tv2.setText(shuffled.get(0));
         tv2.setX(80);
         tv2.setY(-150);
         tv2.setRotation(-60);
 
+        tv3.setText(shuffled.get(1));
         tv3.setX(125);
         tv3.setY(-75);
         tv3.setRotation(-35);
 
+        tv4.setText(shuffled.get(2));
         tv4.setX(180);
         tv4.setY(-5);
         tv4.setRotation(0);
 
+        tv5.setText(shuffled.get(3));
         tv5.setX(120);
         tv5.setY(65);
         tv5.setRotation(35);
 
-        tv6.setText("Zonk");
+        tv6.setText(shuffled.get(4));
         tv6.setX(60);
         tv6.setY(100);
         tv6.setRotation(60);
 
-        tv7.setText("Zonk");
+        tv7.setText(shuffled.get(5));
         tv7.setX(0);
         tv7.setY(120);
         tv7.setRotation(90);
 
-        tv8.setText("Zonk");
+        tv8.setText(shuffled.get(6));
         tv8.setX(-70);
         tv8.setY(110);
         tv8.setRotation(300);
 
-        tv9.setText("Zonk");
+        tv9.setText(shuffled.get(7));
         tv9.setX(-110);
         tv9.setY(60);
         tv9.setRotation(-30);
 
-        tv10.setText("Zonk");
+        tv10.setText(shuffled.get(8));
         tv10.setX(-120);
         tv10.setY(-4);
         tv10.setRotation(0);
 
-        tv11.setText("Zonk");
+        tv11.setText(shuffled.get(9));
         tv11.setX(-110);
         tv11.setY(-65);
         tv11.setRotation(25);
 
-        tv12.setText("Zonk");
+        tv12.setText(shuffled.get(10));
         tv12.setX(-60);
         tv12.setY(-110);
         tv12.setRotation(60);
@@ -229,7 +247,8 @@ public class GameActivity extends AppCompatActivity {
             if (degrees >= start && degrees < end) {
                 // degrees is in [start;end[
                 // so text is equals to sectors[i];
-                text = sectors[i];
+                //text = sectors[i];
+                text = shuffled.get(i);
             }
 
             i++;
@@ -242,7 +261,7 @@ public class GameActivity extends AppCompatActivity {
             Log.d("START", String.valueOf(start));
             Log.d("END", String.valueOf(end));
 
-        } while (text == null  &&  i < sectors.length);
+        } while (text == null  &&  i < shuffled.size());
 
         return text;
     }

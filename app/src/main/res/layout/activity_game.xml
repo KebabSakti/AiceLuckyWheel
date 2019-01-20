@@ -282,8 +282,9 @@
         </LinearLayout>
 
     </LinearLayout>
+    -->
 
-    <!--
+
     <Button
         android:id="@+id/res_btn"
         android:layout_width="wrap_content"
@@ -296,6 +297,6 @@
         android:textAllCaps="false"
         android:visibility="gone"
         android:layout_below="@+id/wheelCont"/>
-        -->
+
 
 </RelativeLayout>

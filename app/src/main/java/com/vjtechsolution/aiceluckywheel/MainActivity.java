@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +19,8 @@ import com.newtronlabs.easypermissions.EasyPermissions;
 import com.newtronlabs.easypermissions.listener.IError;
 import com.newtronlabs.easypermissions.listener.IPermissionsListener;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -56,6 +59,29 @@ public class MainActivity extends AppCompatActivity implements IPermissionsListe
 
         loginBtn.setOnClickListener(this);
         registerBtn.setOnClickListener(this);
+
+        /*
+        Integer[] asd = {1,2,3,4,5,6,7};
+
+        int start = 3;
+        int value;
+        for (int i = 0; i < asd.length; i++)
+        {
+            value = asd[(start + i) % asd.length];
+
+            Log.d("RANDOM", String.valueOf(value));
+        }
+        */
+
+        ArrayList<String> a = new ArrayList<>();
+
+        for(int x = 0; x < 10; x++){
+            a.add("PR"+x);
+        }
+
+        Collections.shuffle(a);
+
+        Log.d("SHUFFLE", String.valueOf(a));
     }
 
     public void onResume(){
