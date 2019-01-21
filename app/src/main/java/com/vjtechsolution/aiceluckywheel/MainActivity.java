@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements IPermissionsListe
             public void onFailure(Call<UserAuth> call, Throwable t) {
                 pDialog.changeAlertType(SweetAlertDialog.ERROR_TYPE);
                 pDialog.setTitleText("Login Gagal");
-                pDialog.setContentText(t.getMessage());
+                pDialog.setContentText("Cek kembali username dan password atau user belum terdaftar");
             }
         });
     }

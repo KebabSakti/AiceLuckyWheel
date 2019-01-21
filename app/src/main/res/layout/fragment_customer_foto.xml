@@ -67,7 +67,7 @@
                 android:textColorHint="#686868"
                 android:textColor="#000"
                 android:typeface="monospace"
-                android:inputType="text"
+                android:inputType="number"
                 android:maxLines="1"
                 android:layout_marginBottom="10dp"
                 android:hint="No. Telp"/>

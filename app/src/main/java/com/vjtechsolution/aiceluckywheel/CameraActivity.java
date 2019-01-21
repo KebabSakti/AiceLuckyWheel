@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+import me.echodev.resizer.Resizer;
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -30,6 +31,7 @@ public class CameraActivity extends AppCompatActivity {
     private ImageView cameraTrigger;
     private SweetAlertDialog pDialog;
     private String image;
+    private Bitmap newBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,8 @@ public class CameraActivity extends AppCompatActivity {
 
                 CameraUtils.decodeBitmap(jpeg, new CameraUtils.BitmapCallback() {
                     @Override
-                    public void onBitmapReady(final Bitmap bitmap) {
+                    public void onBitmapReady(Bitmap bitmap) {
+                        newBitmap = bitmap;
 
                         AsyncJob.doInBackground(new AsyncJob.OnBackgroundJob() {
                             @Override
@@ -79,17 +82,16 @@ public class CameraActivity extends AppCompatActivity {
                                     File file = new File(path, fileName + ".jpg");
                                     out = new FileOutputStream(file);
 
-                                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                                    newBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
 
-                                    /*
-                                    new Resizer(CameraViewActivity.this)
-                                            .setTargetLength(800)
-                                            .setQuality(80)
-                                            .setSourceImage(file)
-                                            .getResizedFile();
-                                            */
 
-                                    image = file.getAbsolutePath();
+                                    File resizedFile = new Resizer(CameraActivity.this)
+                                                            .setTargetLength(800)
+                                                            .setQuality(80)
+                                                            .setSourceImage(file)
+                                                            .getResizedFile();
+
+                                    image = resizedFile.getAbsolutePath();
 
                                     out.close();
 
