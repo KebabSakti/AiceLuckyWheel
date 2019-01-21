@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -48,6 +47,7 @@ public class AddSalesActivity extends AppCompatActivity {
     private String nama = "";
     private String no_telp = "";
     private Integer sumProd = 0;
+    private String inNoTlp;
 
     private TextView toolbarHeading;
     private Integer page = 0;
@@ -110,8 +110,6 @@ public class AddSalesActivity extends AppCompatActivity {
                             ArrayList<String> products = new ArrayList<>();
                             ArrayList<Integer> qtyProducts = new ArrayList<>();
 
-                            //Log.d("RES", String.valueOf(custProduct));
-
                             for(Map.Entry<String, Integer> pair : custProduct.entrySet()){
                                 products.add(pair.getKey());
                                 qtyProducts.add(pair.getValue());
@@ -151,6 +149,7 @@ public class AddSalesActivity extends AppCompatActivity {
 
     private void postData(String username, String api_token, String kode_asset, String foto, String nama, String no_telp, ArrayList<String> products, ArrayList<Integer> qtyProducts) {
         pDialog.show();
+        inNoTlp = no_telp;
 
         PostSalesData post = RetrofitBuilderGenerator.createService(PostSalesData.class);
 
@@ -174,6 +173,7 @@ public class AddSalesActivity extends AppCompatActivity {
                     Intent intent = new Intent(AddSalesActivity.this, GameActivity.class);
                     intent.putExtra("session", session);
                     intent.putExtra("total", sumProd);
+                    intent.putExtra("no_telp", inNoTlp);
                     startActivity(intent);
 
                     pDialog.dismissWithAnimation();
@@ -226,7 +226,7 @@ public class AddSalesActivity extends AppCompatActivity {
             //produk dipilih
             custProduct.put(evBusProduct.getProduct(), evBusProduct.getQty());
 
-            Log.d("RES", String.valueOf(custProduct));
+            //Log.d("RES", String.valueOf(custProduct));
 
             for(Integer i : custProduct.values()){
                 sumProd += i;

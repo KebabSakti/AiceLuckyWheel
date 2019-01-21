@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitBuilderGenerator {
 
-    private static final String BASE_URL = "http://192.168.0.61:8000";
+    private static final String BASE_URL = "http://192.168.2.18:8000";
 
     private static OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(1, TimeUnit.MINUTES)
@@ -24,8 +24,8 @@ public class RetrofitBuilderGenerator {
 
     private static Retrofit retrofit = builder.build();
 
-    private static OkHttpClient.Builder httpClient
-            = new OkHttpClient.Builder();
+    /*private static OkHttpClient.Builder httpClient
+            = new OkHttpClient.Builder();*/
 
     public static <S> S createService(Class<S> serviceClass) {
         return retrofit.create(serviceClass);

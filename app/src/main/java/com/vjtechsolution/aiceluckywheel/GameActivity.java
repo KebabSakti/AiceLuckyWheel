@@ -1,6 +1,8 @@
 package com.vjtechsolution.aiceluckywheel;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,35 +17,50 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
-public class GameActivity extends AppCompatActivity {
+import cn.pedant.SweetAlert.SweetAlertDialog;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView kesempatan, drawn, win, lost;
 
-    private Integer drawnTotal;
-    private Integer total;
-    private Integer winTotal;
-    private Integer lostTotal;
+    private Integer drawnTotal = 0;
+    private Integer total = 0;
+    private Integer winTotal = 0;
+    private Integer lostTotal = 0;
+    private String session;
+    private String no_telp;
 
     private ArrayList<String> spinRes = new ArrayList<>();
+
+    private ArrayList<Integer> beli = new ArrayList<>();
+    private ArrayList<Integer> drawnRes = new ArrayList<>();
+    private ArrayList<Integer> menang = new ArrayList<>();
+    private ArrayList<Integer> kalah = new ArrayList<>();
+    private ArrayList<String> hadiah = new ArrayList<>();
 
     private Intent intent;
 
     private Button spinBtn, endBtn;
     private FrameLayout wheel;
 
-    private FrameLayout frameLayout;
-    private TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7, tv8, tv9, tv10, tv11, tv12;
+    private SweetAlertDialog pDialog;
 
-    // sectors of our wheel (look at the image to see the sectors)
-    private static final String[] sectors = {
-            "Ice Sugar","Bingo","Funky Susu","Nanas","Zonk","Zonk","Mochi","Zonk","Zonk","Zonk","Zonk","Milk Melon"
-    };
+    private SharedPreferences sharedPreferences;
+    private String username, kode_asset, api_token;
 
-    private ArrayList<String>  sectorList = new ArrayList<>();
-
+    private ArrayList<String> prizeList = new ArrayList<>();
     private ArrayList<String> shuffled;
+    private List<PrizeData> prizeData;
+
+    private ArrayList<GamePlayData> gamePlayDatas = new ArrayList<>();
+
+    private TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7, tv8, tv9, tv10, tv11, tv12;
 
     // We create a Random instance to make our wheel spin randomly
     private static final Random RANDOM = new Random();
@@ -59,18 +76,16 @@ public class GameActivity extends AppCompatActivity {
 
         intent = getIntent();
 
-        total = intent.getIntExtra("total", 0);
-        drawnTotal = 0;
-        winTotal = 0;
-        lostTotal = 0;
+        sharedPreferences = getSharedPreferences(getString(R.string.key_preference), Context.MODE_PRIVATE);
+        username = sharedPreferences.getString("username","");
+        api_token = sharedPreferences.getString("api_token", "");
+        kode_asset = sharedPreferences.getString("kode_asset", "");
 
-        for(int i=0;i<sectors.length;i++){
-            sectorList.add(sectors[i]);
-        }
-
-        Collections.shuffle(sectorList);
-
-        shuffled = sectorList;
+        //progress dialog
+        pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
+        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorAccent));
+        pDialog.setTitleText("Loading");
+        pDialog.setCancelable(false);
 
         kesempatan = findViewById(R.id.kesempatan);
         drawn = findViewById(R.id.drawn);
@@ -79,6 +94,10 @@ public class GameActivity extends AppCompatActivity {
         wheel = findViewById(R.id.wheel);
         spinBtn = findViewById(R.id.spin_btn);
         endBtn = findViewById(R.id.res_btn);
+
+        total = intent.getIntExtra("total", 0);
+        session = intent.getStringExtra("session");
+        no_telp = intent.getStringExtra("no_telp");
 
         kesempatan.setText("Chance : "+total);
         drawn.setText("Drawn : "+drawnTotal);
@@ -98,69 +117,152 @@ public class GameActivity extends AppCompatActivity {
         tv11 = findViewById(R.id.tv11);
         tv12 = findViewById(R.id.tv12);
 
-        tv1.setText(shuffled.get(11));
+        spinBtn.setOnClickListener(this);
+        endBtn.setOnClickListener(this);
+
         tv1.setX(1);
-        tv1.setY(-170);
+        tv1.setY(-140);
         tv1.setRotation(-90);
 
-        tv2.setText(shuffled.get(0));
         tv2.setX(80);
-        tv2.setY(-150);
+        tv2.setY(-120);
         tv2.setRotation(-60);
 
-        tv3.setText(shuffled.get(1));
         tv3.setX(125);
         tv3.setY(-75);
         tv3.setRotation(-35);
 
-        tv4.setText(shuffled.get(2));
-        tv4.setX(180);
+        tv4.setX(160);
         tv4.setY(-5);
         tv4.setRotation(0);
 
-        tv5.setText(shuffled.get(3));
         tv5.setX(120);
         tv5.setY(65);
         tv5.setRotation(35);
 
-        tv6.setText(shuffled.get(4));
         tv6.setX(60);
         tv6.setY(100);
         tv6.setRotation(60);
 
-        tv7.setText(shuffled.get(5));
         tv7.setX(0);
         tv7.setY(120);
         tv7.setRotation(90);
 
-        tv8.setText(shuffled.get(6));
         tv8.setX(-70);
         tv8.setY(110);
         tv8.setRotation(300);
 
-        tv9.setText(shuffled.get(7));
         tv9.setX(-110);
         tv9.setY(60);
         tv9.setRotation(-30);
 
-        tv10.setText(shuffled.get(8));
         tv10.setX(-120);
         tv10.setY(-4);
         tv10.setRotation(0);
 
-        tv11.setText(shuffled.get(9));
         tv11.setX(-110);
         tv11.setY(-65);
         tv11.setRotation(25);
 
-        tv12.setText(shuffled.get(10));
         tv12.setX(-60);
         tv12.setY(-110);
         tv12.setRotation(60);
 
-        spinBtn.setOnClickListener(new View.OnClickListener() {
+        getPrizeData();
+    }
+
+    private void getPrizeData() {
+        pDialog.show();
+
+        //add one result to game play data array
+        //gamePlayDatas.add(new GamePlayData(session, no_telp, kode_asset, "",total, 0, 0, 0));
+
+        final PrizeModel prizeModel = new PrizeModel(
+                username,
+                api_token,
+                kode_asset
+        );
+
+        GetPrize getPrize = RetrofitBuilderGenerator.createService(GetPrize.class);
+        Call<PrizeModel> prizeModelCall = getPrize.prizeModel(prizeModel);
+
+        prizeModelCall.enqueue(new Callback<PrizeModel>() {
             @Override
-            public void onClick(View v) {
+            public void onResponse(Call<PrizeModel> call, Response<PrizeModel> response) {
+                if(response.code() == 200){
+                    prizeData = response.body().getData();
+
+                    for(int i=0; i < 12; i++){
+
+                        if(i < prizeData.size()){
+                            prizeList.add(prizeData.get(i).getProduct().getNama());
+                        }else{
+                            prizeList.add("Zonk");
+                        }
+                    }
+
+                    shuffleThePrize();
+                    pDialog.hide();
+                }else{
+
+                    pDialog.dismissWithAnimation();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PrizeModel> call, Throwable t) {
+
+                pDialog.dismissWithAnimation();
+            }
+        });
+    }
+
+    private void shuffleThePrize() {
+        Collections.shuffle(prizeList);
+
+        shuffled = prizeList;
+
+        tv1.setText(shuffled.get(11));
+        tv2.setText(shuffled.get(0));
+        tv3.setText(shuffled.get(1));
+        tv4.setText(shuffled.get(2));
+        tv5.setText(shuffled.get(3));
+        tv6.setText(shuffled.get(4));
+        tv7.setText(shuffled.get(5));
+        tv8.setText(shuffled.get(6));
+        tv9.setText(shuffled.get(7));
+        tv10.setText(shuffled.get(8));
+        tv11.setText(shuffled.get(9));
+        tv12.setText(shuffled.get(10));
+    }
+
+    private String getSector(int degrees) {
+        int i = 0;
+        String text = null;
+
+        do {
+            // start and end of each sector on the wheel
+            float start = HALF_SECTOR * (i * 2 + 1);
+            float end = HALF_SECTOR * (i * 2 + 3);
+
+            if (degrees >= start && degrees < end) {
+                // degrees is in [start;end[
+                // so text is equals to sectors[i];
+                //text = sectors[i];
+                text = shuffled.get(i);
+            }
+
+            i++;
+
+        } while (text == null  &&  i < shuffled.size());
+
+        return text;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.spin_btn:
                 if(total < 1){
                     Toast.makeText(GameActivity.this, "Kesempatan anda telah habis", Toast.LENGTH_SHORT).show();
                 }else {
@@ -208,9 +310,14 @@ public class GameActivity extends AppCompatActivity {
 
                             Toast.makeText(GameActivity.this, result, Toast.LENGTH_SHORT).show();
 
+                            //add result to game play data array
+                            gamePlayDatas.add(new GamePlayData(session, no_telp, kode_asset, result, total, drawnTotal, winTotal, lostTotal));
+
                             if(total < 1){
                                 spinBtn.setVisibility(View.GONE);
                                 endBtn.setVisibility(View.VISIBLE);
+
+                                saveGameResult();
                             }
                         }
 
@@ -223,46 +330,49 @@ public class GameActivity extends AppCompatActivity {
                     // we start the animation
                     wheel.startAnimation(rotateAnim);
                 }
-            }
-        });
+                break;
 
-        //akhiri game dan launch halaman record
-        endBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+            case R.id.res_btn:
                 Toast.makeText(GameActivity.this, String.valueOf(spinRes), Toast.LENGTH_SHORT).show();
-            }
-        });
+                break;
+        }
     }
 
-    private String getSector(int degrees) {
-        int i = 0;
-        String text = null;
+    private void saveGameResult() {
+        pDialog.setTitleText("Uploading");
+        pDialog.setContentText("Mohon tunggu, menyimpan data ke server");
+        pDialog.show();
 
-        do {
-            // start and end of each sector on the wheel
-            float start = HALF_SECTOR * (i * 2 + 1);
-            float end = HALF_SECTOR * (i * 2 + 3);
+        for(int i = 0; i < gamePlayDatas.size(); i++){
+            beli.add(gamePlayDatas.get(i).getBeli());
+            drawnRes.add(gamePlayDatas.get(i).getDrawn());
+            menang.add(gamePlayDatas.get(i).getMenang());
+            kalah.add(gamePlayDatas.get(i).getKalah());
+            hadiah.add(gamePlayDatas.get(i).getHadiah());
+        }
 
-            if (degrees >= start && degrees < end) {
-                // degrees is in [start;end[
-                // so text is equals to sectors[i];
-                //text = sectors[i];
-                text = shuffled.get(i);
+        PostGameResult postGameResult = RetrofitBuilderGenerator.createService(PostGameResult.class);
+        Call<GameResultData> gameResultDataCall = postGameResult.postGameResult(username, api_token, kode_asset, session, no_telp, beli, drawnRes, menang, kalah, hadiah);
+
+        gameResultDataCall.enqueue(new Callback<GameResultData>() {
+            @Override
+            public void onResponse(Call<GameResultData> call, Response<GameResultData> response) {
+                if(response.code() == 200){
+                    Log.d("GAMERES", String.valueOf(response.body().getMessage()));
+
+                    pDialog.dismissWithAnimation();
+                }else{
+
+                    pDialog.dismissWithAnimation();
+                }
             }
 
-            i++;
-            // now we can test our Android Roulette Game :)
-            // That's all !
-            // In the second part, you will learn how to add some bets on the table to play to the Roulette Game :)
-            // Subscribe and stay tuned !
+            @Override
+            public void onFailure(Call<GameResultData> call, Throwable t) {
 
-            Log.d("DEGREE", String.valueOf(degrees));
-            Log.d("START", String.valueOf(start));
-            Log.d("END", String.valueOf(end));
+                pDialog.dismissWithAnimation();
+            }
+        });
 
-        } while (text == null  &&  i < shuffled.size());
-
-        return text;
     }
 }
