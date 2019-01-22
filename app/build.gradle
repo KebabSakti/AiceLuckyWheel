@@ -51,4 +51,6 @@ dependencies {
     implementation 'com.arasthel:asyncjob-library:1.0.3'
     //resizer
     implementation 'com.github.hkk595:Resizer:v1.5'
+    //shimer loader
+    implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'
 }

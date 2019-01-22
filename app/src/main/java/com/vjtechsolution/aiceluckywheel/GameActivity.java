@@ -316,12 +316,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                             //Toast.makeText(GameActivity.this, result, Toast.LENGTH_SHORT).show();
 
-                            if(!result.equals("Zonk")) {
-                                new SweetAlertDialog(GameActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
-                                        .setTitleText("Selamat!")
-                                        .setContentText("Anda mendapatkan " + result)
-                                        .setCustomImage(R.drawable.ic_android_black_24dp)
-                                        .show();
+                            if(result != null) {
+                                if (!result.equals("Zonk")) {
+                                    new SweetAlertDialog(GameActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                                            .setTitleText("Selamat!")
+                                            .setContentText("Anda mendapatkan " + result)
+                                            .setCustomImage(R.drawable.edit2)
+                                            .show();
+                                }
                             }
 
                             if(total < 1){
@@ -385,14 +387,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
                 }else{
-                    Toast.makeText(GameActivity.this, String.valueOf(response.body()), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GameActivity.this, "Fail! CODE != 200 : "+String.valueOf(response.body()), Toast.LENGTH_SHORT).show();
                     pDialog.dismissWithAnimation();
                 }
             }
 
             @Override
             public void onFailure(Call<GameResultData> call, Throwable t) {
-                Toast.makeText(GameActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(GameActivity.this, "Fail! NO CODE : "+t.getMessage(), Toast.LENGTH_SHORT).show();
                 pDialog.dismissWithAnimation();
             }
         });

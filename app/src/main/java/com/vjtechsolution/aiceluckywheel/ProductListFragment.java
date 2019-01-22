@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
+
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -39,6 +41,8 @@ public class ProductListFragment extends Fragment {
 
     private SweetAlertDialog pDialog;
 
+    private ShimmerFrameLayout shimmerFrameLayout;
+
     public ProductListFragment() {
         // Required empty public constructor
     }
@@ -58,6 +62,8 @@ public class ProductListFragment extends Fragment {
 
         context = getContext();
 
+        shimmerFrameLayout = v.findViewById(R.id.shimmer_loader);
+
         sharedPreferences = context.getSharedPreferences(getString(R.string.key_preference), Context.MODE_PRIVATE);
         username = sharedPreferences.getString("username","");
         api_token = sharedPreferences.getString("api_token", "");
@@ -74,11 +80,15 @@ public class ProductListFragment extends Fragment {
 
     private void getAllProducts(ProductModel productModel) {
         //progress dialog
+        /*
         pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorAccent));
         pDialog.setTitleText("Loading");
         pDialog.setCancelable(false);
         pDialog.show();
+        */
+
+        shimmerFrameLayout.startShimmerAnimation();
 
         GetProduct getProduct = RetrofitBuilderGenerator.createService(GetProduct.class);
         Call<ProductModel> getProductCall = getProduct.productModel(productModel);
@@ -98,13 +108,18 @@ public class ProductListFragment extends Fragment {
                     adapter = new ProductListAdapter(productDataList);
                     recyclerView.setAdapter(adapter);
 
-                    pDialog.dismissWithAnimation();
+                    //pDialog.dismissWithAnimation();
+
+                    shimmerFrameLayout.stopShimmerAnimation();
+                    shimmerFrameLayout.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<ProductModel> call, Throwable t) {
-                pDialog.dismissWithAnimation();
+                //pDialog.dismissWithAnimation();
+                shimmerFrameLayout.stopShimmerAnimation();
+                shimmerFrameLayout.setVisibility(View.GONE);
 
                 Toast.makeText(context, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
