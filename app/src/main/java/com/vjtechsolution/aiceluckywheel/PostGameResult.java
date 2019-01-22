@@ -11,7 +11,7 @@ import retrofit2.http.POST;
 public interface PostGameResult {
 
     @FormUrlEncoded
-    @POST("test")
+    @POST("api/game/play")
     Call<GameResultData> postGameResult(
             @Field("username") String username,
             @Field("api_token") String api_token,
@@ -22,7 +22,7 @@ public interface PostGameResult {
             @Field("drawn[]") ArrayList<Integer> drawn,
             @Field("menang[]") ArrayList<Integer> menang,
             @Field("kalah[]") ArrayList<Integer> kalah,
-            @Field("hadiah[]") List<String> hadiah
+            @Field("hadiah[]") ArrayList<String> hadiah
     );
 
 }

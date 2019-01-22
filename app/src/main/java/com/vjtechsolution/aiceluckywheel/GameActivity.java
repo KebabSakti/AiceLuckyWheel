@@ -35,6 +35,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Integer lostTotal = 0;
     private String session;
     private String no_telp;
+    private String result = "";
 
     private ArrayList<String> spinRes = new ArrayList<>();
 
@@ -278,6 +279,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     rotateAnim.setAnimationListener(new Animation.AnimationListener() {
                         @Override
                         public void onAnimationStart(Animation animation) {
+                            //add result to game play data array
+                            gamePlayDatas.add(new GamePlayData(session, no_telp, kode_asset, result, total, drawnTotal, winTotal, lostTotal));
+
                             // we empty the result text view when the animation start
                             total -= 1;
                             drawnTotal += 1;
@@ -292,12 +296,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             // we display the correct sector pointed by the triangle at the end of the rotate animation
-                            String result = getSector(360 - (degree % 360));
+                            result = getSector(360 - (degree % 360));
 
-                            if(result.equals("Zonk")){
-                                lostTotal += 1;
-                            }else{
-                                winTotal += 1;
+                            if(result != null) {
+                                if (result.equals("Zonk")) {
+                                    lostTotal += 1;
+                                } else {
+                                    winTotal += 1;
+                                }
                             }
 
                             spinRes.add(result);
@@ -308,14 +314,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             spinBtn.setText("Putar Roda");
                             spinBtn.setEnabled(true);
 
-                            Toast.makeText(GameActivity.this, result, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(GameActivity.this, result, Toast.LENGTH_SHORT).show();
 
-                            //add result to game play data array
-                            gamePlayDatas.add(new GamePlayData(session, no_telp, kode_asset, result, total, drawnTotal, winTotal, lostTotal));
+                            if(!result.equals("Zonk")) {
+                                new SweetAlertDialog(GameActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                                        .setTitleText("Selamat!")
+                                        .setContentText("Anda mendapatkan " + result)
+                                        .setCustomImage(R.drawable.ic_android_black_24dp)
+                                        .show();
+                            }
 
                             if(total < 1){
                                 spinBtn.setVisibility(View.GONE);
                                 endBtn.setVisibility(View.VISIBLE);
+
+                                gamePlayDatas.add(new GamePlayData(session, no_telp, kode_asset, result, total, drawnTotal, winTotal, lostTotal));
 
                                 saveGameResult();
                             }
@@ -360,16 +373,26 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 if(response.code() == 200){
                     Log.d("GAMERES", String.valueOf(response.body().getMessage()));
 
-                    pDialog.dismissWithAnimation();
-                }else{
+                    pDialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    pDialog.setTitleText("Sukses");
+                    pDialog.setContentText(response.body().getMessage());
+                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            pDialog.dismissWithAnimation();
 
+                            finish();
+                        }
+                    });
+                }else{
+                    Toast.makeText(GameActivity.this, String.valueOf(response.body()), Toast.LENGTH_SHORT).show();
                     pDialog.dismissWithAnimation();
                 }
             }
 
             @Override
             public void onFailure(Call<GameResultData> call, Throwable t) {
-
+                Toast.makeText(GameActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
                 pDialog.dismissWithAnimation();
             }
         });

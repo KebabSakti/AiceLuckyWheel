@@ -48,6 +48,10 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
 
         play.setOnClickListener(this);
         logout.setOnClickListener(this);
+    }
+
+    public void onResume(){
+        super.onResume();
 
         getDashboardData();
     }
