@@ -3,9 +3,9 @@ package com.vjtechsolution.aiceluckywheel;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
@@ -44,6 +45,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Integer> menang = new ArrayList<>();
     private ArrayList<Integer> kalah = new ArrayList<>();
     private ArrayList<String> hadiah = new ArrayList<>();
+
+    private MediaPlayer mediaPlayer;
+    private Timer timer;
 
     private Intent intent;
 
@@ -193,17 +197,22 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 if(response.code() == 200){
                     prizeData = response.body().getData();
 
-                    for(int i=0; i < 12; i++){
-
+                    for(int i=0; i < prizeData.size(); i++){
+                        prizeList.add(prizeData.get(i).getProduct().getNama());
+                        /*
                         if(i < prizeData.size()){
                             prizeList.add(prizeData.get(i).getProduct().getNama());
-                        }else{
-                            prizeList.add("Zonk");
                         }
+
+                        prizeList.add("Zonk");
+                        */
+                    }
+
+                    for(int s=0; s < 12-prizeData.size(); s++){
+                        prizeList.add("Zonk");
                     }
 
                     shuffleThePrize();
-                    pDialog.hide();
                 }else{
 
                     pDialog.dismissWithAnimation();
@@ -235,6 +244,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         tv10.setText(shuffled.get(8));
         tv11.setText(shuffled.get(9));
         tv12.setText(shuffled.get(10));
+
+        pDialog.hide();
     }
 
     private String getSector(int degrees) {
@@ -264,6 +275,26 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.spin_btn:
+                /*
+                mediaPlayer = MediaPlayer.create(GameActivity.this, R.raw.game_spin);
+                timer = new Timer();
+                timer.scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        /*
+                        if(mediaPlayer.isPlaying()){
+                            mediaPlayer.reset();
+                            mediaPlayer.release();
+                        }else{
+                            mediaPlayer.start();
+                        }
+
+
+                        mediaPlayer.start();
+                    }
+                },0,1);
+                */
+
                 if(total < 1){
                     Toast.makeText(GameActivity.this, "Kesempatan anda telah habis", Toast.LENGTH_SHORT).show();
                 }else {
@@ -295,6 +326,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
+                            //timer.cancel();
                             // we display the correct sector pointed by the triangle at the end of the rotate animation
                             result = getSector(360 - (degree % 360));
 
@@ -318,10 +350,34 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                             if(result != null) {
                                 if (!result.equals("Zonk")) {
-                                    new SweetAlertDialog(GameActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+                                    //play winning sound
+                                    mediaPlayer = MediaPlayer.create(GameActivity.this, R.raw.game_win);
+                                    if(mediaPlayer.isPlaying()){
+                                        mediaPlayer.reset();
+                                        mediaPlayer.release();
+                                    }else{
+                                        mediaPlayer.start();
+                                    }
+
+                                    //show win dialogue
+                                    new SweetAlertDialog(GameActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                                             .setTitleText("Selamat!")
                                             .setContentText("Anda mendapatkan " + result)
-                                            .setCustomImage(R.drawable.edit2)
+                                            .show();
+                                }else{
+                                    //play lost sound
+                                    mediaPlayer = MediaPlayer.create(GameActivity.this, R.raw.game_lost);
+                                    if(mediaPlayer.isPlaying()){
+                                        mediaPlayer.reset();
+                                        mediaPlayer.release();
+                                    }else{
+                                        mediaPlayer.start();
+                                    }
+
+                                    //show lost dialogue
+                                    new SweetAlertDialog(GameActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                            .setTitleText("Maaf")
+                                            .setContentText("Anda belum beruntung")
                                             .show();
                                 }
                             }
@@ -334,6 +390,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                                 saveGameResult();
                             }
+
+                            //Toast.makeText(GameActivity.this, String.valueOf(prizeList.size()), Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
@@ -373,11 +431,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onResponse(Call<GameResultData> call, Response<GameResultData> response) {
                 if(response.code() == 200){
-                    Log.d("GAMERES", String.valueOf(response.body().getMessage()));
 
-                    pDialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                    pDialog.setTitleText("Sukses");
-                    pDialog.setContentText(response.body().getMessage());
+                    Toast.makeText(GameActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    pDialog.changeAlertType(SweetAlertDialog.WARNING_TYPE);
+                    pDialog.setTitleText("Hasil Spin");
+                    pDialog.setContentText(String.valueOf(spinRes));
                     pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                         @Override
                         public void onClick(SweetAlertDialog sweetAlertDialog) {
@@ -386,6 +444,28 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             finish();
                         }
                     });
+
+                    /*
+                    Log.d("GAMERES", String.valueOf(response.body().getMessage()));
+
+                    pDialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    pDialog.setTitleText("Sukses");
+                    pDialog.setContentText(response.body().getMessage());
+                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            pDialog.changeAlertType(SweetAlertDialog.WARNING_TYPE);
+                            pDialog.setTitleText("Hasil Spin");
+                            pDialog.setContentText(String.valueOf(spinRes));
+                            pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    finish();
+                                }
+                            });
+                        }
+                    });
+                    */
                 }else{
                     Toast.makeText(GameActivity.this, "Fail! CODE != 200 : "+String.valueOf(response.body()), Toast.LENGTH_SHORT).show();
                     pDialog.dismissWithAnimation();
@@ -399,5 +479,16 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+    }
+
+    public void onStop(){
+        super.onStop();
+
+        if(mediaPlayer != null) {
+            if(mediaPlayer.isPlaying()) {
+                mediaPlayer.reset();
+                mediaPlayer.release();
+            }
+        }
     }
 }

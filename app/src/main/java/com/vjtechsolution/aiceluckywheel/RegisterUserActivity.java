@@ -1,11 +1,14 @@
 package com.vjtechsolution.aiceluckywheel;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Timer;
@@ -23,6 +26,7 @@ public class RegisterUserActivity extends AppCompatActivity {
     private EditText username, password, namaOutlet;
     private Double lat, lng;
     private Button daftarButton;
+    private TextView versionText;
 
     private SweetAlertDialog pDialog;
 
@@ -35,6 +39,15 @@ public class RegisterUserActivity extends AppCompatActivity {
         password = findViewById(R.id.daftarPassword);
         namaOutlet = findViewById(R.id.daftarNamaOutlet);
         daftarButton = findViewById(R.id.daftarButton);
+        versionText = findViewById(R.id.version);
+
+        try {
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+            versionText.setText("v"+version);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
         daftarButton.setOnClickListener(new View.OnClickListener() {
             @Override

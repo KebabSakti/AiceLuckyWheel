@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements IPermissionsListe
     private EditText password;
     private Button loginBtn;
     private TextView registerBtn;
+    private TextView versionText;
 
     private Boolean internet;
     private Boolean location;
@@ -54,6 +56,15 @@ public class MainActivity extends AppCompatActivity implements IPermissionsListe
         password = findViewById(R.id.loginPassword);
         loginBtn = findViewById(R.id.loginButton);
         registerBtn = findViewById(R.id.loginRegister);
+        versionText = findViewById(R.id.version);
+
+        try {
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            String version = pInfo.versionName;
+            versionText.setText("v"+version);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
         EasyPermissions.getInstance().requestPermissions(this, this);
 
