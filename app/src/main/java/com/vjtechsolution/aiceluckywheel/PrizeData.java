@@ -4,6 +4,12 @@ public class PrizeData {
     private String kode_asset, kode_produk;
     private ProductRelData product;
 
+    public PrizeData(String kode_asset, String kode_produk, ProductRelData product) {
+        this.kode_asset = kode_asset;
+        this.kode_produk = kode_produk;
+        this.product = product;
+    }
+
     public String getKode_asset() {
         return kode_asset;
     }

@@ -1,6 +1,12 @@
 package com.vjtechsolution.aiceluckywheel;
 
 public class ProductRelData {
+
+    public ProductRelData(String kode, String nama) {
+        this.kode = kode;
+        this.nama = nama;
+    }
+
     private String kode, nama;
 
     public String getKode() {

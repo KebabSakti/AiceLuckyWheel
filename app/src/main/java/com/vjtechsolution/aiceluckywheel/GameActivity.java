@@ -199,13 +199,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                     for(int i=0; i < prizeData.size(); i++){
                         prizeList.add(prizeData.get(i).getProduct().getNama());
-                        /*
-                        if(i < prizeData.size()){
-                            prizeList.add(prizeData.get(i).getProduct().getNama());
-                        }
-
-                        prizeList.add("Zonk");
-                        */
                     }
 
                     for(int s=0; s < 12-prizeData.size(); s++){

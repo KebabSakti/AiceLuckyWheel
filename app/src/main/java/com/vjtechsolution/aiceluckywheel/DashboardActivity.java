@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -120,8 +121,36 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
 
             case R.id.play:
                 //play
-                Intent intent = new Intent(DashboardActivity.this, AddSalesActivity.class);
-                startActivity(intent);
+                //Intent intent = new Intent(DashboardActivity.this, AddSalesActivity.class);
+                //startActivity(intent);
+
+                //cek apakah setting pada outlet sudah ada
+                PrizeModel prizeModel = new PrizeModel(username, api_token, kode_asset);
+                GetPrize getPrize = RetrofitBuilderGenerator.createService(GetPrize.class);
+                Call<PrizeModel> prizeModelCall = getPrize.prizeModel(prizeModel);
+
+                prizeModelCall.enqueue(new Callback<PrizeModel>() {
+                    @Override
+                    public void onResponse(Call<PrizeModel> call, Response<PrizeModel> response) {
+                        Log.d("RESPONSE 200", String.valueOf(response));
+
+                        if(response.code() == 200 && response.body().getStatus()){
+                            //play
+                            Intent intent = new Intent(DashboardActivity.this, AddSalesActivity.class);
+                            startActivity(intent);
+                        }else{
+                            Toast.makeText(DashboardActivity.this, "Hadiah belum di set untuk toko anda", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<PrizeModel> call, Throwable t) {
+                        Log.d("RESPONSE FAIL", t.getMessage());
+
+                        Toast.makeText(DashboardActivity.this, "Hadiah belum di set untuk toko anda", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
                 break;
 
             case R.id.logout:

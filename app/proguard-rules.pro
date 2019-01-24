@@ -20,13 +20,13 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--dontwarn com.squareup.okhttp3.**
--keep class com.squareup.okhttp3.** { *;}
--keepattributes Signature
--keepattributes *Annotation*
--keep class okhttp3.** { *; }
--keep interface okhttp3.** { *; }
--dontwarn okhttp3.**
--dontwarn okio.**
--dontwarn org.codehaus.mojo.animal_sniffer.*
--dontwarn retrofit2.**
+#-dontwarn com.squareup.okhttp3.**
+#-keep class com.squareup.okhttp3.** { *;}
+#-keepattributes Signature
+#-keepattributes *Annotation*
+#-keep class okhttp3.** { *; }
+#-keep interface okhttp3.** { *; }
+#-dontwarn okhttp3.**
+#-dontwarn okio.**
+#-dontwarn org.codehaus.mojo.animal_sniffer.*
+#-dontwarn retrofit2.**
