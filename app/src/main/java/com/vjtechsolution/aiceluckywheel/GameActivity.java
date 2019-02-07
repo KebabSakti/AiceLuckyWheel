@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
@@ -20,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
@@ -257,6 +259,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 text = shuffled.get(i);
             }
 
+            Log.d("SECTOR", String.valueOf(start));
+
             i++;
 
         } while (text == null  &&  i < shuffled.size());
@@ -268,7 +272,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.spin_btn:
-                /*
                 mediaPlayer = MediaPlayer.create(GameActivity.this, R.raw.game_spin);
                 timer = new Timer();
                 timer.scheduleAtFixedRate(new TimerTask() {
@@ -281,12 +284,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         }else{
                             mediaPlayer.start();
                         }
-
+                        */
 
                         mediaPlayer.start();
                     }
                 },0,1);
-                */
 
                 if(total < 1){
                     Toast.makeText(GameActivity.this, "Kesempatan anda telah habis", Toast.LENGTH_SHORT).show();
@@ -319,7 +321,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
-                            //timer.cancel();
+                            timer.cancel();
                             // we display the correct sector pointed by the triangle at the end of the rotate animation
                             result = getSector(360 - (degree % 360));
 

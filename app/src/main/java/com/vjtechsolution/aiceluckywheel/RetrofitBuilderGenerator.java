@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitBuilderGenerator {
 
-    private static final String BASE_URL = "http://luckyaice.nexaice.com/";
+    private static final String BASE_URL = "http://192.168.0.59:8000/";
 
     private static OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(1, TimeUnit.MINUTES)
