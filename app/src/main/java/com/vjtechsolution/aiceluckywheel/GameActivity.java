@@ -65,6 +65,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<String> shuffled;
     private List<PrizeData> prizeData;
 
+    private ArrayList<Integer> winSector = new ArrayList<>();
+
     private ArrayList<GamePlayData> gamePlayDatas = new ArrayList<>();
 
     private TextView tv1, tv2, tv3, tv4, tv5, tv6, tv7, tv8, tv9, tv10, tv11, tv12;
@@ -227,6 +229,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         shuffled = prizeList;
 
+        if(!shuffled.get(11).equals("Zonk")){
+            winSector.add(11*30);
+        }
+
+        for(int i=0; i < shuffled.size()-1; i++){
+            if(!shuffled.get(i).equals("Zonk")){
+                Integer sWin = i * 30;
+                winSector.add(sWin);
+            }
+        }
+
+        Log.d("Prize Shuff", String.valueOf(shuffled));
+        Log.d("Prize Sector", String.valueOf(winSector));
+
         tv1.setText(shuffled.get(11));
         tv2.setText(shuffled.get(0));
         tv3.setText(shuffled.get(1));
@@ -295,7 +311,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }else {
                     degreeOld = degree % 360;
                     // we calculate random angle for rotation of our wheel
-                    degree = RANDOM.nextInt(360) + 2000;
+                    degree = RANDOM.nextInt(360) + 360;
                     // rotation effect on the center of the wheel
                     RotateAnimation rotateAnim = new RotateAnimation(degreeOld, degree,
                             RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
