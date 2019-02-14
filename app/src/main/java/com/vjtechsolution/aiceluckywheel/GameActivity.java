@@ -65,7 +65,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<String> shuffled;
     private List<PrizeData> prizeData;
 
-    private ArrayList<Integer> winSector = new ArrayList<>();
+    private ArrayList<Double> winSector = new ArrayList<>();
 
     private ArrayList<GamePlayData> gamePlayDatas = new ArrayList<>();
 
@@ -230,13 +230,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         shuffled = prizeList;
 
         if(!shuffled.get(11).equals("Zonk")){
-            winSector.add(11*30);
+            //winSector.add(11*30);
         }
 
-        for(int i=0; i < shuffled.size()-1; i++){
+        for(int i=0; i < shuffled.size(); i++){
             if(!shuffled.get(i).equals("Zonk")){
-                Integer sWin = i * 30;
-                winSector.add(sWin);
+                Double sWin = (Double.valueOf(i+1)) / 12;
+                winSector.add(sWin * 360);
+                int asd =360 - (int) Math.round(winSector.get(0));
+                Log.d("Prize Float", String.valueOf(asd));
             }
         }
 
@@ -275,7 +277,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 text = shuffled.get(i);
             }
 
-            Log.d("SECTOR", String.valueOf(start));
+            //Log.d("Prize SECTOR", String.valueOf(degrees));
 
             i++;
 
@@ -311,7 +313,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 }else {
                     degreeOld = degree % 360;
                     // we calculate random angle for rotation of our wheel
-                    degree = RANDOM.nextInt(360) + 360;
+                    //degree = RANDOM.nextInt(360) + 360;
+                    //degree = (int) Math.round(winSector.get(0)) + 360;
+                    degree = 360 - (int) Math.round(winSector.get(RANDOM.nextInt(0 - 3)));
                     // rotation effect on the center of the wheel
                     RotateAnimation rotateAnim = new RotateAnimation(degreeOld, degree,
                             RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
