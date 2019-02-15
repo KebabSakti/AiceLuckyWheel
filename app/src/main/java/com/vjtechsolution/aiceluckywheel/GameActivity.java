@@ -48,6 +48,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Integer> kalah = new ArrayList<>();
     private ArrayList<String> hadiah = new ArrayList<>();
 
+    private Integer luck = 5;
+
     private MediaPlayer mediaPlayer;
     private Timer timer;
 
@@ -66,6 +68,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private List<PrizeData> prizeData;
 
     private ArrayList<Double> winSector = new ArrayList<>();
+    private ArrayList<Double> zonkSector = new ArrayList<>();
 
     private ArrayList<GamePlayData> gamePlayDatas = new ArrayList<>();
 
@@ -104,7 +107,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         spinBtn = findViewById(R.id.spin_btn);
         endBtn = findViewById(R.id.res_btn);
 
-        total = intent.getIntExtra("total", 0);
+        total = Math.round(intent.getIntExtra("total", 0) / 2);
         session = intent.getStringExtra("session");
         no_telp = intent.getStringExtra("no_telp");
 
@@ -229,21 +232,25 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         shuffled = prizeList;
 
-        if(!shuffled.get(11).equals("Zonk")){
-            //winSector.add(11*30);
-        }
-
         for(int i=0; i < shuffled.size(); i++){
             if(!shuffled.get(i).equals("Zonk")){
                 Double sWin = (Double.valueOf(i+1)) / 12;
                 winSector.add(sWin * 360);
-                int asd =360 - (int) Math.round(winSector.get(0));
-                Log.d("Prize Float", String.valueOf(asd));
+                int sectorW = 360 - (int) Math.round(winSector.get(0));
+
+                //Log.d("Prize Won", String.valueOf(sectorW));
+            }else{
+                Double sZonk = (Double.valueOf(i+1)) / 12;
+                zonkSector.add(sZonk * 360);
+                int sectorZ = 360 - (int) Math.round(zonkSector.get(0));
+
+                //Log.d("Prize Zonk", String.valueOf(sectorZ));
             }
         }
 
         Log.d("Prize Shuff", String.valueOf(shuffled));
-        Log.d("Prize Sector", String.valueOf(winSector));
+        Log.d("Prize Won", String.valueOf(winSector));
+        Log.d("Prize Zonk", String.valueOf(zonkSector));
 
         tv1.setText(shuffled.get(11));
         tv2.setText(shuffled.get(0));
@@ -315,7 +322,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     // we calculate random angle for rotation of our wheel
                     //degree = RANDOM.nextInt(360) + 360;
                     //degree = (int) Math.round(winSector.get(0)) + 360;
-                    degree = 360 - (int) Math.round(winSector.get(RANDOM.nextInt(0 - 3)));
+
+                    if(RANDOM.nextInt(100) > luck){
+                        //win
+                        degree = 360 + (360 - (int) Math.round(winSector.get(RANDOM.nextInt(winSector.size()))));
+                    }else{
+                        //zonk
+                        degree = 360 + (360 - (int) Math.round(zonkSector.get(RANDOM.nextInt(zonkSector.size()))));
+                    }
+
                     // rotation effect on the center of the wheel
                     RotateAnimation rotateAnim = new RotateAnimation(degreeOld, degree,
                             RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
@@ -348,8 +363,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             if(result != null) {
                                 if (result.equals("Zonk")) {
                                     lostTotal += 1;
+
+                                    luck += 5;
                                 } else {
                                     winTotal += 1;
+
+                                    luck = 5;
                                 }
                             }
 
