@@ -30,6 +30,8 @@ import retrofit2.Response;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
+    //private LottieAnimationView lottieAnimationView;
+
     private TextView kesempatan, drawn, win, lost;
 
     private Integer drawnTotal = 0;
@@ -92,6 +94,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         username = sharedPreferences.getString("username","");
         api_token = sharedPreferences.getString("api_token", "");
         kode_asset = sharedPreferences.getString("kode_asset", "");
+
+        //lottieAnimationView = findViewById(R.id.star_success);
 
         //progress dialog
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
@@ -181,6 +185,14 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         tv12.setRotation(60);
 
         getPrizeData();
+    }
+
+    public void onResume(){
+        super.onResume();
+
+        //lottieAnimationView.setAnimation("start_success.json");
+        //lottieAnimationView.playAnimation();
+        //lottieAnimationView.loop(true);
     }
 
     private void getPrizeData() {
@@ -324,11 +336,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     //degree = (int) Math.round(winSector.get(0)) + 360;
 
                     if(RANDOM.nextInt(100) > luck){
-                        //win
-                        degree = 360 + (360 - (int) Math.round(winSector.get(RANDOM.nextInt(winSector.size()))));
-                    }else{
                         //zonk
-                        degree = 360 + (360 - (int) Math.round(zonkSector.get(RANDOM.nextInt(zonkSector.size()))));
+                        degree = 720 + (360 - (int) Math.round(zonkSector.get(RANDOM.nextInt(zonkSector.size()))));
+                    }else{
+                        //win
+                        degree = 720 + (360 - (int) Math.round(winSector.get(RANDOM.nextInt(winSector.size()))));
                     }
 
                     // rotation effect on the center of the wheel

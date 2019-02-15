@@ -94,8 +94,8 @@ public class AddSalesActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(sumProd < 1){
-                    Toast.makeText(AddSalesActivity.this, "Masukkan detail pembelian kustomer", Toast.LENGTH_SHORT).show();
+                if(sumProd < 2){
+                    Toast.makeText(AddSalesActivity.this, "Minimal pembelian 2 untuk bermain lucky wheel", Toast.LENGTH_SHORT).show();
                 }else{
                     if(page != 1){
                         next.setText("Mulai Main");
