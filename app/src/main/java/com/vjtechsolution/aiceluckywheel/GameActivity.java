@@ -16,6 +16,8 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,7 +52,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<Integer> kalah = new ArrayList<>();
     private ArrayList<String> hadiah = new ArrayList<>();
 
-    private Integer luck = 5;
+    private LottieAnimationView winAnimation;
+
+    private Integer luck = 100;
 
     private MediaPlayer mediaPlayer;
     private Timer timer;
@@ -110,6 +114,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         wheel = findViewById(R.id.wheel);
         spinBtn = findViewById(R.id.spin_btn);
         endBtn = findViewById(R.id.res_btn);
+
+        winAnimation = findViewById(R.id.star_success);
 
         total = Math.round(intent.getIntExtra("total", 0) / 2);
         session = intent.getStringExtra("session");
@@ -378,6 +384,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                                     luck += 5;
                                 } else {
+                                    winAnimation.setAnimation("ribbon.json");
+                                    winAnimation.playAnimation();
+
                                     winTotal += 1;
 
                                     luck = 5;

@@ -221,10 +221,6 @@
         android:id="@+id/star_success"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_fileName="star_success.json"/>
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
