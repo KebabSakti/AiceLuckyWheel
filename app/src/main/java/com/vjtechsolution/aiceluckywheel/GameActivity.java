@@ -54,7 +54,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private LottieAnimationView winAnimation;
 
-    private Integer luck = 100;
+    private Integer luck = 90;
 
     private MediaPlayer mediaPlayer;
     private Timer timer;
@@ -191,14 +191,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         tv12.setRotation(60);
 
         getPrizeData();
-    }
-
-    public void onResume(){
-        super.onResume();
-
-        //lottieAnimationView.setAnimation("start_success.json");
-        //lottieAnimationView.playAnimation();
-        //lottieAnimationView.loop(true);
     }
 
     private void getPrizeData() {
@@ -389,7 +381,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                                     winTotal += 1;
 
-                                    luck = 5;
+                                    luck = 90;
                                 }
                             }
 
