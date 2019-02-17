@@ -5,12 +5,16 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.arasthel.asyncjob.AsyncJob;
+import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,6 +27,12 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private Button logout;
 
     private String username, api_token, kode_asset;
+
+    private CardView adsContainer;
+    private ImageView adsCloseBtn;
+    private ImageView adsImage;
+
+    private String adsUrl = "";
 
     private Context context;
     private SharedPreferences sharedPreferences;
@@ -47,14 +57,58 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         play = findViewById(R.id.play);
         logout = findViewById(R.id.logout);
 
+        //ads
+        adsContainer = findViewById(R.id.ads_container);
+        adsCloseBtn = findViewById(R.id.ads_close_icon);
+        adsImage = findViewById(R.id.ads_img);
+
         play.setOnClickListener(this);
         logout.setOnClickListener(this);
+        adsCloseBtn.setOnClickListener(this);
     }
 
     public void onResume(){
         super.onResume();
 
         getDashboardData();
+
+        getAds();
+    }
+
+    private void getAds(){
+        AdsModel adsModel = new AdsModel(username, api_token, kode_asset);
+
+        AdsInterface adsInterface = RetrofitBuilderGenerator.createService(AdsInterface.class);
+        Call<AdsModel> adsModelCall = adsInterface.adsModel(adsModel);
+
+        adsModelCall.enqueue(new Callback<AdsModel>() {
+            @Override
+            public void onResponse(Call<AdsModel> call, Response<AdsModel> response) {
+
+                if(response.code() == 200){
+                    if(response.body().getStatus()){
+                        adsUrl = response.body().getData().getFile();
+                        //Picasso.get().load(adsUrl).into(adsImage);
+
+                        AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
+                            @Override
+                            public void doInUIThread() {
+                                adsContainer.setVisibility(View.VISIBLE);
+                                
+                                //load ads
+                                Picasso.get().load(adsUrl).into(adsImage);
+                            }
+                        });
+
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AdsModel> call, Throwable t) {
+                Toast.makeText(context, String.valueOf(t.getMessage()), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void getDashboardData() {
@@ -158,6 +212,10 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 logUserOut();
                 break;
 
+            case R.id.ads_close_icon:
+                //close ads
+                adsContainer.setVisibility(View.GONE);
+                break;
         }
     }
 

@@ -3,7 +3,8 @@ package com.vjtechsolution.aiceluckywheel;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.MediaPlayer;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -23,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
@@ -31,8 +31,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
-
-    //private LottieAnimationView lottieAnimationView;
 
     private TextView kesempatan, drawn, win, lost;
 
@@ -54,9 +52,15 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     private LottieAnimationView winAnimation;
 
-    private Integer luck = 90;
+    private Integer luck = 5;
 
-    private MediaPlayer mediaPlayer;
+    private SoundPool soundPool;
+    private int winSoundId;
+    private int lostSoundId;
+    private int spinSoundId;
+    private boolean isWinSoundLoad = false;
+    private boolean isLostSoundLoad = false;
+    private boolean isSpinSoundLoad = false;
     private Timer timer;
 
     private Intent intent;
@@ -99,8 +103,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         api_token = sharedPreferences.getString("api_token", "");
         kode_asset = sharedPreferences.getString("kode_asset", "");
 
-        //lottieAnimationView = findViewById(R.id.star_success);
-
         //progress dialog
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
         pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorAccent));
@@ -141,6 +143,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         spinBtn.setOnClickListener(this);
         endBtn.setOnClickListener(this);
+
+        //ready the sound
+        prepareSound(this);
 
         tv1.setX(1);
         tv1.setY(-140);
@@ -191,6 +196,35 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         tv12.setRotation(60);
 
         getPrizeData();
+    }
+
+    private void prepareSound(Context context){
+        soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        winSoundId = soundPool.load(context, R.raw.game_win, 1);
+        lostSoundId = soundPool.load(context, R.raw.game_lost, 1);
+        spinSoundId = soundPool.load(context, R.raw.game_spin, 1);
+
+        soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+            @Override
+            public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                if(status == 0){
+                    switch (sampleId)
+                    {
+                        case 2:
+                            isWinSoundLoad = true;
+                            break;
+
+                        case 3:
+                            isLostSoundLoad = true;
+                            break;
+
+                        case 4:
+                            isSpinSoundLoad = true;
+                            break;
+                    }
+                }
+            }
+        });
     }
 
     private void getPrizeData() {
@@ -307,23 +341,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.spin_btn:
-                mediaPlayer = MediaPlayer.create(GameActivity.this, R.raw.game_spin);
-                timer = new Timer();
-                timer.scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        /*
-                        if(mediaPlayer.isPlaying()){
-                            mediaPlayer.reset();
-                            mediaPlayer.release();
-                        }else{
-                            mediaPlayer.start();
-                        }
-                        */
-
-                        mediaPlayer.start();
-                    }
-                },0,1);
+                //play spin sound
 
                 if(total < 1){
                     Toast.makeText(GameActivity.this, "Kesempatan anda telah habis", Toast.LENGTH_SHORT).show();
@@ -366,44 +384,42 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                         @Override
                         public void onAnimationEnd(Animation animation) {
-                            timer.cancel();
+                            //timer.cancel();
+
                             // we display the correct sector pointed by the triangle at the end of the rotate animation
                             result = getSector(360 - (degree % 360));
+
+                            spinRes.add(result);
+
+                            Log.d("GAME SECTOR", result);
 
                             if(result != null) {
                                 if (result.equals("Zonk")) {
                                     lostTotal += 1;
 
-                                    luck += 5;
+                                    if(luck <= 100) {
+                                        luck += 5;
+                                    }else{
+                                        luck = 100;
+                                    }
+
                                 } else {
                                     winAnimation.setAnimation("ribbon.json");
                                     winAnimation.playAnimation();
 
                                     winTotal += 1;
 
-                                    luck = 90;
+                                    luck = 5;
                                 }
                             }
-
-                            spinRes.add(result);
-
-                            win.setText("Win : "+winTotal);
-                            lost.setText("Lost : "+lostTotal);
-
-                            spinBtn.setText("Putar Roda");
-                            spinBtn.setEnabled(true);
 
                             //Toast.makeText(GameActivity.this, result, Toast.LENGTH_SHORT).show();
 
                             if(result != null) {
                                 if (!result.equals("Zonk")) {
                                     //play winning sound
-                                    mediaPlayer = MediaPlayer.create(GameActivity.this, R.raw.game_win);
-                                    if(mediaPlayer.isPlaying()){
-                                        mediaPlayer.reset();
-                                        mediaPlayer.release();
-                                    }else{
-                                        mediaPlayer.start();
+                                    if(isWinSoundLoad){
+                                        soundPool.play(winSoundId,1,1,1,0,1);
                                     }
 
                                     //show win dialogue
@@ -413,12 +429,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                                             .show();
                                 }else{
                                     //play lost sound
-                                    mediaPlayer = MediaPlayer.create(GameActivity.this, R.raw.game_lost);
-                                    if(mediaPlayer.isPlaying()){
-                                        mediaPlayer.reset();
-                                        mediaPlayer.release();
-                                    }else{
-                                        mediaPlayer.start();
+                                    if(isLostSoundLoad){
+                                        soundPool.play(lostSoundId, 1,1,1,0,1);
                                     }
 
                                     //show lost dialogue
@@ -429,6 +441,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                                 }
                             }
 
+                            //jika kesempatan spin habis, simpan ke server
                             if(total < 1){
                                 spinBtn.setVisibility(View.GONE);
                                 endBtn.setVisibility(View.VISIBLE);
@@ -438,7 +451,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                                 saveGameResult();
                             }
 
-                            //Toast.makeText(GameActivity.this, String.valueOf(prizeList.size()), Toast.LENGTH_SHORT).show();
+                            win.setText("Win : "+winTotal);
+                            lost.setText("Lost : "+lostTotal);
+
+                            spinBtn.setText("Putar Roda");
+                            spinBtn.setEnabled(true);
                         }
 
                         @Override
@@ -451,6 +468,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     wheel.startAnimation(rotateAnim);
                 }
                 break;
+
 
             case R.id.res_btn:
                 Toast.makeText(GameActivity.this, String.valueOf(spinRes), Toast.LENGTH_SHORT).show();
@@ -471,12 +489,21 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             hadiah.add(gamePlayDatas.get(i).getHadiah());
         }
 
+        Log.d("GAME BELI", String.valueOf(beli)+" : "+String.valueOf(beli.size()));
+        Log.d("GAME DRAWN", String.valueOf(drawnRes)+" : "+String.valueOf(drawnRes.size()));
+        Log.d("GAME MENANG", String.valueOf(menang)+" : "+String.valueOf(menang.size()));
+        Log.d("GAME KALAH", String.valueOf(kalah)+" : "+String.valueOf(kalah.size()));
+        Log.d("GAME HADIAH", String.valueOf(hadiah)+" : "+String.valueOf(hadiah.size()));
+
         PostGameResult postGameResult = RetrofitBuilderGenerator.createService(PostGameResult.class);
         Call<GameResultData> gameResultDataCall = postGameResult.postGameResult(username, api_token, kode_asset, session, no_telp, beli, drawnRes, menang, kalah, hadiah);
 
         gameResultDataCall.enqueue(new Callback<GameResultData>() {
             @Override
             public void onResponse(Call<GameResultData> call, Response<GameResultData> response) {
+
+                //Log.d("GAME DEBUG", String.valueOf(response.body().getMessage()));
+
                 if(response.code() == 200){
 
                     Toast.makeText(GameActivity.this, response.body().getMessage(), Toast.LENGTH_SHORT).show();
@@ -492,27 +519,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     });
 
-                    /*
-                    Log.d("GAMERES", String.valueOf(response.body().getMessage()));
-
-                    pDialog.changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                    pDialog.setTitleText("Sukses");
-                    pDialog.setContentText(response.body().getMessage());
-                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            pDialog.changeAlertType(SweetAlertDialog.WARNING_TYPE);
-                            pDialog.setTitleText("Hasil Spin");
-                            pDialog.setContentText(String.valueOf(spinRes));
-                            pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                @Override
-                                public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    finish();
-                                }
-                            });
-                        }
-                    });
-                    */
                 }else{
                     Toast.makeText(GameActivity.this, "Fail! CODE != 200 : "+String.valueOf(response.body()), Toast.LENGTH_SHORT).show();
                     pDialog.dismissWithAnimation();
@@ -528,14 +534,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    public void onStop(){
-        super.onStop();
+    public void onDestroy(){
+        super.onDestroy();
 
-        if(mediaPlayer != null) {
-            if(mediaPlayer.isPlaying()) {
-                mediaPlayer.reset();
-                mediaPlayer.release();
-            }
-        }
+        soundPool.release();
+        soundPool = null;
     }
 }

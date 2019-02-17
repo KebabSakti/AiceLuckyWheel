@@ -7,7 +7,26 @@ import java.util.ArrayList;
 
 public class GameResultData {
     private String username, api_token, kode_asset, message, session, no_telp;
-    private Boolean status;
+
+    /*
+    private String message;
+    @SerializedName("username")
+    @Expose
+    private String username;
+    @SerializedName("api_token")
+    @Expose
+    private String api_token;
+    @SerializedName("kode_asset")
+    @Expose
+    private String kode_asset;
+    @SerializedName("session")
+    @Expose
+    private String session;
+    @SerializedName("no_telp")
+    @Expose
+    private String no_telp;
+    */
+
     @SerializedName("beli[]")
     @Expose
     private ArrayList<Integer> beli;
