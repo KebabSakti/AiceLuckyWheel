@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -78,7 +80,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private void getAds(){
         AdsModel adsModel = new AdsModel(username, api_token, kode_asset);
 
-        AdsInterface adsInterface = RetrofitBuilderGenerator.createService(AdsInterface.class);
+        final AdsInterface adsInterface = RetrofitBuilderGenerator.createService(AdsInterface.class);
         Call<AdsModel> adsModelCall = adsInterface.adsModel(adsModel);
 
         adsModelCall.enqueue(new Callback<AdsModel>() {
@@ -88,15 +90,17 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 if(response.code() == 200){
                     if(response.body().getStatus()){
                         adsUrl = response.body().getData().getFile();
-                        //Picasso.get().load(adsUrl).into(adsImage);
 
                         AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
                             @Override
                             public void doInUIThread() {
-                                adsContainer.setVisibility(View.VISIBLE);
-                                
                                 //load ads
                                 Picasso.get().load(adsUrl).into(adsImage);
+
+                                //Animation topBtm = AnimationUtils.loadAnimation(context, R.anim.slide_in_top);
+                                //adsContainer.startAnimation(topBtm);
+
+                                adsContainer.setVisibility(View.VISIBLE);
                             }
                         });
 
@@ -193,7 +197,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                             Intent intent = new Intent(DashboardActivity.this, AddSalesActivity.class);
                             startActivity(intent);
                         }else{
-                            Toast.makeText(DashboardActivity.this, "Hadiah belum di set untuk toko anda", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(DashboardActivity.this, "Hadiah belum di set untuk toko anda atau stok hadiah habis", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -201,7 +205,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                     public void onFailure(Call<PrizeModel> call, Throwable t) {
                         Log.d("RESPONSE FAIL", t.getMessage());
 
-                        Toast.makeText(DashboardActivity.this, "Hadiah belum di set untuk toko anda", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DashboardActivity.this, "Hadiah belum di set untuk toko anda atau stok hadiah habis", Toast.LENGTH_SHORT).show();
                     }
                 });
 

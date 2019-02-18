@@ -21,7 +21,9 @@ import com.airbnb.lottie.LottieAnimationView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 
@@ -76,6 +78,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<String> prizeList = new ArrayList<>();
     private ArrayList<String> shuffled;
     private List<PrizeData> prizeData;
+    private HashMap<String, Integer> mapPrize = new HashMap<>();
+
+    private int sectorW, sectorZ;
 
     private ArrayList<Double> winSector = new ArrayList<>();
     private ArrayList<Double> zonkSector = new ArrayList<>();
@@ -250,6 +255,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                     for(int i=0; i < prizeData.size(); i++){
                         prizeList.add(prizeData.get(i).getProduct().getNama());
+
+                        //prepare prize map
+                        mapPrize.put(prizeData.get(i).getProduct().getNama(), prizeData.get(i).getPrize_stock());
                     }
 
                     for(int s=0; s < 12-prizeData.size(); s++){
@@ -280,13 +288,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             if(!shuffled.get(i).equals("Zonk")){
                 Double sWin = (Double.valueOf(i+1)) / 12;
                 winSector.add(sWin * 360);
-                int sectorW = 360 - (int) Math.round(winSector.get(0));
+                sectorW = 360 - (int) Math.round(winSector.get(0));
 
                 //Log.d("Prize Won", String.valueOf(sectorW));
             }else{
                 Double sZonk = (Double.valueOf(i+1)) / 12;
                 zonkSector.add(sZonk * 360);
-                int sectorZ = 360 - (int) Math.round(zonkSector.get(0));
+                sectorZ = 360 - (int) Math.round(zonkSector.get(0));
 
                 //Log.d("Prize Zonk", String.valueOf(sectorZ));
             }
@@ -410,6 +418,39 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                                     winTotal += 1;
 
                                     luck = 5;
+
+                                    //check stock win prize
+                                    if(mapPrize.get(result) > 0) {
+                                        mapPrize.put(result, mapPrize.get(result) - 1);
+                                    }else{
+                                        int totStock = 0;
+                                        winSector = new ArrayList<>();
+                                        for (Map.Entry<String, Integer> entry : mapPrize.entrySet())
+                                        {
+                                            //System.out.println(entry.getKey() + "/" + entry.getValue());
+
+                                            totStock += entry.getValue();
+
+                                            if(totStock > 0) {
+                                                if (entry.getValue() > 0) {
+                                                    for (int i = 0; i < shuffled.size(); i++) {
+                                                        if (!shuffled.get(i).equals(entry.getKey())) {
+                                                            Double sWin = (Double.valueOf(i + 1)) / 12;
+                                                            winSector.add(sWin * 360);
+                                                            sectorW = 360 - (int) Math.round(winSector.get(0));
+
+                                                            Log.d("Prize Won NEWW", String.valueOf(sectorW));
+                                                        }
+                                                    }
+                                                }
+                                            }else{
+                                                Toast.makeText(GameActivity.this, "Maaf.. Stok hadiah sudah habis", Toast.LENGTH_SHORT).show();
+
+                                                //simpan ke server
+                                                saveGameResult();
+                                            }
+                                        }
+                                    }
                                 }
                             }
 
