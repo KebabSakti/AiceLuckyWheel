@@ -419,10 +419,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                                     luck = 5;
 
+                                    mapPrize.put(result, mapPrize.get(result) -1);
+
                                     //check stock win prize
-                                    if(mapPrize.get(result) > 0) {
-                                        mapPrize.put(result, mapPrize.get(result) - 1);
-                                    }else{
+                                    if(mapPrize.get(result) == 0) {
                                         int totStock = 0;
                                         winSector = new ArrayList<>();
                                         for (Map.Entry<String, Integer> entry : mapPrize.entrySet())
