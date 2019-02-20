@@ -285,12 +285,29 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         shuffled = prizeList;
 
         for(int i=0; i < shuffled.size(); i++){
-            if(!shuffled.get(i).equals("Zonk")){
+            if(!shuffled.get(i).equals("Zonk") && mapPrize.get(shuffled.get(i)) > 0){
+
                 Double sWin = (Double.valueOf(i+1)) / 12;
                 winSector.add(sWin * 360);
                 sectorW = 360 - (int) Math.round(winSector.get(0));
 
-                //Log.d("Prize Won", String.valueOf(sectorW));
+                /*
+                for (Map.Entry<String, Integer> entry : mapPrize.entrySet())
+                {
+                    if (entry.getValue() > 0) {
+                        for (int z = 0; z < shuffled.size(); z++) {
+                            if (!shuffled.get(z).equals(entry.getKey())) {
+                                Double sWin = (Double.valueOf(z + 1)) / 12;
+                                winSector.add(sWin * 360);
+                                sectorW = 360 - (int) Math.round(winSector.get(0));
+
+                                Log.d("Prize Won NEWW", String.valueOf(sectorW));
+                            }
+                        }
+                    }
+                }
+                */
+
             }else{
                 Double sZonk = (Double.valueOf(i+1)) / 12;
                 zonkSector.add(sZonk * 360);
@@ -417,18 +434,31 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
                                     winTotal += 1;
 
-                                    luck = 5;
+                                    luck = -200;
 
                                     mapPrize.put(result, mapPrize.get(result) -1);
 
                                     //check stock win prize
                                     if(mapPrize.get(result) == 0) {
-                                        int totStock = 0;
+                                        //int totStock = 0;
                                         winSector = new ArrayList<>();
                                         for (Map.Entry<String, Integer> entry : mapPrize.entrySet())
                                         {
                                             //System.out.println(entry.getKey() + "/" + entry.getValue());
 
+                                            if (entry.getValue() > 0) {
+                                                for (int i = 0; i < shuffled.size(); i++) {
+                                                    if (!shuffled.get(i).equals(entry.getKey())) {
+                                                        Double sWin = (Double.valueOf(i + 1)) / 12;
+                                                        winSector.add(sWin * 360);
+                                                        sectorW = 360 - (int) Math.round(winSector.get(0));
+
+                                                        Log.d("Prize Won NEWW", String.valueOf(sectorW));
+                                                    }
+                                                }
+                                            }
+
+                                            /*
                                             totStock += entry.getValue();
 
                                             if(totStock > 0) {
@@ -449,6 +479,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                                                 //simpan ke server
                                                 saveGameResult();
                                             }
+                                            */
+
                                         }
                                     }
                                 }

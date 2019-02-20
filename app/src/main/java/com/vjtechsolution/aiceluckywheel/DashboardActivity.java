@@ -110,7 +110,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
 
             @Override
             public void onFailure(Call<AdsModel> call, Throwable t) {
-                Toast.makeText(context, String.valueOf(t.getMessage()), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(context, String.valueOf(t.getMessage()), Toast.LENGTH_SHORT).show();
             }
         });
     }

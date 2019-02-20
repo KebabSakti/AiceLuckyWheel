@@ -80,13 +80,6 @@ public class ProductListFragment extends Fragment {
 
     private void getAllProducts(ProductModel productModel) {
         //progress dialog
-        /*
-        pDialog = new SweetAlertDialog(context, SweetAlertDialog.PROGRESS_TYPE);
-        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.colorAccent));
-        pDialog.setTitleText("Loading");
-        pDialog.setCancelable(false);
-        pDialog.show();
-        */
 
         shimmerFrameLayout.startShimmerAnimation();
 
