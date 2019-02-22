@@ -125,6 +125,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         winAnimation = findViewById(R.id.star_success);
 
         total = Math.round(intent.getIntExtra("total", 0) / 2);
+        total = (total > 5) ? 5 : total;
         session = intent.getStringExtra("session");
         no_telp = intent.getStringExtra("no_telp");
 
@@ -285,28 +286,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         shuffled = prizeList;
 
         for(int i=0; i < shuffled.size(); i++){
-            if(!shuffled.get(i).equals("Zonk") && mapPrize.get(shuffled.get(i)) > 0){
+            if(!shuffled.get(i).equals("Zonk")){
 
-                Double sWin = (Double.valueOf(i+1)) / 12;
-                winSector.add(sWin * 360);
-                sectorW = 360 - (int) Math.round(winSector.get(0));
-
-                /*
-                for (Map.Entry<String, Integer> entry : mapPrize.entrySet())
-                {
-                    if (entry.getValue() > 0) {
-                        for (int z = 0; z < shuffled.size(); z++) {
-                            if (!shuffled.get(z).equals(entry.getKey())) {
-                                Double sWin = (Double.valueOf(z + 1)) / 12;
-                                winSector.add(sWin * 360);
-                                sectorW = 360 - (int) Math.round(winSector.get(0));
-
-                                Log.d("Prize Won NEWW", String.valueOf(sectorW));
-                            }
-                        }
-                    }
+                if(mapPrize.get(shuffled.get(i)) > 0){
+                    Double sWin = (Double.valueOf(i+1)) / 12;
+                    winSector.add(sWin * 360);
+                    sectorW = 360 - (int) Math.round(winSector.get(0));
                 }
-                */
 
             }else{
                 Double sZonk = (Double.valueOf(i+1)) / 12;
@@ -381,7 +367,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         degree = 720 + (360 - (int) Math.round(zonkSector.get(RANDOM.nextInt(zonkSector.size()))));
                     }else{
                         //win
-                        degree = 720 + (360 - (int) Math.round(winSector.get(RANDOM.nextInt(winSector.size()))));
+                        if(winSector.size() > 0) {
+                            degree = 720 + (360 - (int) Math.round(winSector.get(RANDOM.nextInt(winSector.size()))));
+                        }else{
+                            //zonk
+                            degree = 720 + (360 - (int) Math.round(zonkSector.get(RANDOM.nextInt(zonkSector.size()))));
+                        }
                     }
 
                     // rotation effect on the center of the wheel
