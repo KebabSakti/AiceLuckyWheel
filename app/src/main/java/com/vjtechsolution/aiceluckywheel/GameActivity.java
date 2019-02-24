@@ -32,6 +32,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static java.sql.Types.NULL;
+
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView kesempatan, drawn, win, lost;
@@ -60,6 +62,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private int winSoundId;
     private int lostSoundId;
     private int spinSoundId;
+    private int playingSoundId = 0;
     private boolean isWinSoundLoad = false;
     private boolean isLostSoundLoad = false;
     private boolean isSpinSoundLoad = false;
@@ -353,6 +356,13 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.spin_btn:
                 //play spin sound
+                if(isSpinSoundLoad){
+                    if(playingSoundId != 0) {
+                        soundPool.resume(playingSoundId);
+                    }else{
+                        playingSoundId = soundPool.play(spinSoundId, 1, 1, 1, 1, 1);
+                    }
+                }
 
                 if(total < 1){
                     Toast.makeText(GameActivity.this, "Kesempatan anda telah habis", Toast.LENGTH_SHORT).show();
@@ -401,6 +411,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                         @Override
                         public void onAnimationEnd(Animation animation) {
                             //timer.cancel();
+
+                            //pause spin sound
+                            soundPool.pause(playingSoundId);
 
                             // we display the correct sector pointed by the triangle at the end of the rotate animation
                             result = getSector(360 - (degree % 360));
