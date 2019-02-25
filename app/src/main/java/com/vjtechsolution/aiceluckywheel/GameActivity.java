@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -31,8 +32,6 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static java.sql.Types.NULL;
 
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -66,6 +65,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private boolean isWinSoundLoad = false;
     private boolean isLostSoundLoad = false;
     private boolean isSpinSoundLoad = false;
+    private MediaPlayer mediaPlayer;
     private Timer timer;
 
     private Intent intent;
@@ -211,7 +211,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         soundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
         winSoundId = soundPool.load(context, R.raw.game_win, 1);
         lostSoundId = soundPool.load(context, R.raw.game_lost, 1);
-        spinSoundId = soundPool.load(context, R.raw.game_spin, 1);
+        //spinSoundId = soundPool.load(context, R.raw.game_spin, 1);
+
+        //using media player for longer sound
+        mediaPlayer = MediaPlayer.create(this, R.raw.game_spin);
 
         soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
             @Override
@@ -219,18 +222,20 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 if(status == 0){
                     switch (sampleId)
                     {
-                        case 2:
+                        case 1:
                             isWinSoundLoad = true;
                             break;
 
-                        case 3:
+                        case 2:
                             isLostSoundLoad = true;
                             break;
 
-                        case 4:
-                            isSpinSoundLoad = true;
+                        case 3:
+                            //isSpinSoundLoad = true;
                             break;
                     }
+
+                    Log.d("SOUND ID", String.valueOf(sampleId));
                 }
             }
         });
@@ -356,13 +361,23 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()){
             case R.id.spin_btn:
                 //play spin sound
+                /*
                 if(isSpinSoundLoad){
+                    /*
                     if(playingSoundId != 0) {
-                        soundPool.resume(playingSoundId);
+                        soundPool.resume(spinSoundId);
                     }else{
                         playingSoundId = soundPool.play(spinSoundId, 1, 1, 1, 1, 1);
                     }
+
+
+                    soundPool.play(spinSoundId, 1, 1, 1, 0, 1);
                 }
+                */
+
+                mediaPlayer.start();
+
+                //Log.d("SOUND", String.valueOf(isSpinSoundLoad)+" "+String.valueOf(playingSoundId));
 
                 if(total < 1){
                     Toast.makeText(GameActivity.this, "Kesempatan anda telah habis", Toast.LENGTH_SHORT).show();
@@ -388,7 +403,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     // rotation effect on the center of the wheel
                     RotateAnimation rotateAnim = new RotateAnimation(degreeOld, degree,
                             RotateAnimation.RELATIVE_TO_SELF, 0.5f, RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-                    rotateAnim.setDuration(3600);
+                    rotateAnim.setDuration(9000);
                     rotateAnim.setFillAfter(true);
                     rotateAnim.setInterpolator(new DecelerateInterpolator());
                     rotateAnim.setAnimationListener(new Animation.AnimationListener() {
@@ -413,7 +428,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                             //timer.cancel();
 
                             //pause spin sound
-                            soundPool.pause(playingSoundId);
+                            //soundPool.pause(spinSoundId);
 
                             // we display the correct sector pointed by the triangle at the end of the rotate animation
                             result = getSector(360 - (degree % 360));

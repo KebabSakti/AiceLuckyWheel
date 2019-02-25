@@ -103,8 +103,8 @@ public class AddSalesActivity extends AppCompatActivity {
                         page += 1;
                         viewPager.setCurrentItem(page, true);
                     }else{
-                        if(foto.equals("") || nama.equals("") || no_telp.equals("")){
-                            Toast.makeText(AddSalesActivity.this, "Isi field kosong dan centang checkbox", Toast.LENGTH_SHORT).show();
+                        if(foto.equals("") || nama.equals("") || no_telp.equals("") || no_telp.length() < 11){
+                            Toast.makeText(AddSalesActivity.this, "Isi field kosong dan centang checkbox, pastikan no telp minimal 11 digit", Toast.LENGTH_SHORT).show();
                         }else{
 
                             ArrayList<String> products = new ArrayList<>();

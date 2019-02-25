@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitBuilderGenerator {
 
-    private static final String BASE_URL = "http://192.168.3.252:8000/";
+    private static final String BASE_URL = "http://192.168.0.72:8000/";
 
     private static OkHttpClient okHttpClient = new OkHttpClient.Builder()
             .connectTimeout(2, TimeUnit.MINUTES)
